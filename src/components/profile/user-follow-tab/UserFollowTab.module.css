@@ -1,0 +1,27 @@
+.wrapper {
+  display: flex;
+  height: 70px;
+  padding: 10px 20px;
+  align-items: center;
+  gap: 15px;
+}
+
+.profile-image {
+  height: 50px;
+  width: 50px;
+  min-height: 50px;
+  min-width: 50px;
+  display: flex;
+  font-size: 22px;
+  font-weight: 600;
+  object-fit: cover;
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(0, 145, 255, 0.3);
+}
+
+.name {
+  font-size: 18px;
+  font-weight: 600;
+}

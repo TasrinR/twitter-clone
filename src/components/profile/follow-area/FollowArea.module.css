@@ -1,0 +1,47 @@
+.container {
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(4, 36, 75, 0.363);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.field-area {
+  width: 600px;
+  min-height: 300px;
+  height: 600px;
+  background-color: white;
+  opacity: 1;
+  padding: 20px 0;
+  border-radius: 10px;
+  position: relative;
+  overflow: scroll;
+}
+
+.tab-wrapper {
+  width: 100%;
+  height: 60px;
+  display: flex;
+  border-bottom: 1px solid rgb(210, 210, 210);
+  padding-bottom: 15px;
+}
+
+.tab-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 600;
+  opacity: 0.3;
+  cursor: pointer;
+}
+
+.tab-item.active {
+  opacity: 1;
+}

@@ -1,0 +1,85 @@
+.sign-in-container {
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(4, 36, 75, 0.363);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sign-in-area {
+  width: 500px;
+  min-height: 300px;
+  height: max-content;
+  background-color: white;
+  opacity: 1;
+  padding: 30px 40px;
+  border-radius: 30px;
+  position: relative;
+}
+
+.close-button {
+  width: 25px;
+  height: 25px;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  cursor: pointer;
+}
+
+.form-title {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  margin: 0 auto;
+  width: max-content;
+}
+
+.form {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.label {
+  font-size: 14px;
+  display: block;
+  width: 100%;
+}
+
+.input-field {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid rgba(0,0,0,0.1);
+  outline: none;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.submit-button {
+  width: max-content;
+  padding: 10px 15px;
+  border-radius: 20px;
+  border: none;
+  outline: none;
+  background-color: rgb(0,162,255);
+  margin: 0 auto;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.login-text {
+  width: max-content;
+  margin: 10px auto 0;
+}
+
+.login-link {
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+}

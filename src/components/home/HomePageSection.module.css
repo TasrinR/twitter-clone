@@ -1,0 +1,25 @@
+.home-page-container {
+  width: 100%;
+  position: relative;
+}
+
+.post-container {
+  padding: 30px;
+  width: 600px;
+  margin-left: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  border-right: 1px solid rgba(0,0,0,0.1);
+}
+
+.page-title {
+  font-size: 20px
+}
+
+@media (max-width: 1200px) {
+  .post-container {
+    margin-left: 115px;
+  }
+  
+}

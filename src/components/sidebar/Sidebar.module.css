@@ -1,0 +1,26 @@
+.container {
+  min-width: 280px;
+  height: max-content;
+  width: 280px;
+  background-color: rgba(0,0,0,0.03);
+  border-radius: 10px;
+  position: fixed;
+  right: calc((100vw - 1200px)/2);
+  top: 20px;
+  z-index: 23;
+  padding: 20px 20px 10px;
+}
+
+.sidebar-button {
+  width: 100%;
+  border: none;
+  outline: none;
+  background-color: rgb(0, 162, 255);
+  height: 50px;
+  margin-bottom: 10px;
+  border-radius: 30px;
+  font-size: 18px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+}
