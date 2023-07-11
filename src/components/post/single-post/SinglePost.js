@@ -46,7 +46,7 @@ const SinglePost = ({ post, userId, user }) => {
 
   const handleCommentInputArea = () => {
     if (userId) {
-      setShowCommentInputArea(true);
+      setShowCommentInputArea(!showCommentInputArea);
     }
   };
 
@@ -165,7 +165,12 @@ const SinglePost = ({ post, userId, user }) => {
         )}
         {showComment &&
           comments.map((singleComment) => (
-            <Comment singleComment={singleComment} />
+            <Comment
+              singleComment={singleComment}
+              user={user}
+              postId={post._id}
+              userId={userId}
+            />
           ))}
       </div>
     </div>

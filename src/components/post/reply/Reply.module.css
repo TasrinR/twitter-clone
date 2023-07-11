@@ -1,14 +1,8 @@
-.comment-container {
-  display: flex;
-  flex-direction: column;
+.reply-box-container {
   width: 100%;
-  gap: 10px;
-}
-
-.show-comment-contents {
+  padding-left: 50px;
   display: flex;
-  width: 100%;
-  gap: 10px;
+  gap: 20px;
 }
 
 .profile-image-area img,
@@ -51,20 +45,4 @@
   color: rgba(0, 0, 0, 0.5);
   line-height: 20px;
   font-size: 14px;
-}
-
-.view-reply-button, .reply {
-  font-size: 10px ;
-  color: rgba(66, 136, 227, 0.946);
-  cursor: pointer;
-  width: max-content;
-}
-
-.view-reply-button, .reply {
-  text-decoration: underline;
-}
-
-.reply-box-container {
-  width: 100%;
-  padding-left: 50px;
 }

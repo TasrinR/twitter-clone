@@ -130,7 +130,7 @@ export const getAllPosts = async (req, res) => {
         userId: { $first: "$userId" },
         content: { $first: "$content" },
         comments: { $first: "$comments" },
-        favoriteBy: {$first: "$favoriteBy"},
+        favoriteBy: { $first: "$favoriteBy" },
         replies: {
           $push: {
             $cond: [
@@ -148,7 +148,7 @@ export const getAllPosts = async (req, res) => {
         _id: "$_id._id",
         userId: { $first: "$userId" },
         content: { $first: "$content" },
-        favoriteBy: {$first: "$favoriteBy"},
+        favoriteBy: { $first: "$favoriteBy" },
         comments: {
           $push: {
             $cond: [
@@ -239,8 +239,7 @@ export const getAllPosts = async (req, res) => {
     {
       $sort: { _id: -1 },
     },
-  ]
-  );
+  ]);
 
   allPosts.map((post) => {
     const isFollowed = post.profile?.followerList?.find(
@@ -280,7 +279,7 @@ export const addComment = async (req, res) => {
     updatedPost = await Post.findOneAndUpdate(
       {
         _id: new ObjectId(postId),
-        "comments._id": new ObjectId(commentId),
+        "comments.comment._id": new ObjectId(commentId),
       },
       {
         $push: {
