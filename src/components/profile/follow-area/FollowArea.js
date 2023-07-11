@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import UserFollowTab from "../user-follow-tab/UserFollowTab";
 import styles from "./FollowArea.module.css";
 
-const FollowArea = ({ callBack, followerList, followingList, userId }) => {
+const FollowArea = ({ callBack, userId }) => {
   const [list, setList] = useState();
   const [activeId, setActiveId] = useState(1);
   const wrapperRef = useRef();
@@ -65,8 +65,12 @@ const FollowArea = ({ callBack, followerList, followingList, userId }) => {
         </div>
         <div className={styles["show-list-area"]}>
           {activeId == 1
-            ? list?.followingList?.map((item) => <UserFollowTab user={item} />)
-            : list?.followerList?.map((item) => <UserFollowTab user={item} />)}
+            ? list?.followingList?.map((item) => (
+                <UserFollowTab user={item} callBack={callBack} />
+              ))
+            : list?.followerList?.map((item) => (
+                <UserFollowTab user={item} callBack={callBack} />
+              ))}
         </div>
       </div>
     </div>

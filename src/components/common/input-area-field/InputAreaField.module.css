@@ -1,0 +1,39 @@
+.input-area-container {
+  display: flex;
+  width: 100%;
+  gap: 20px;
+  position: relative;
+}
+
+.profile-image-area.comment-box img,
+.profile-image-area.comment-box {
+  height: 30px;
+  width: 30px;
+  min-height: 30px;
+  min-width: 30px;
+  font-size: 12px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: white;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.comment-input {
+  height: 30px;
+  border-radius: 25px;
+  width: 100%;
+  outline: none;
+  border: 1px solid grey;
+  padding: 10px 50px 10px 20px;
+}
+
+.send-button {
+  position: absolute;
+  right: 10px;
+  top: 3px;
+}

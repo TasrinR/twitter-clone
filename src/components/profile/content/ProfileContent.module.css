@@ -1,6 +1,7 @@
 .profile-content-area {
   width: 600px;
   margin-left: 300px;
+
 }
 
 .top-section {
@@ -54,6 +55,7 @@
   font-weight: 600;
   color: white;
   margin: 10px 0 5px;
+  object-fit: cover;
 }
 
 .profile p {
@@ -75,6 +77,16 @@
   border-radius: 30px;
   cursor: pointer;
   right: 10px;
+}
+
+.follow-button {
+  position: absolute;
+  right: 25px;
+  width: 25px;
+  height: 25px;
+  padding: 0;
+  top: 78px;
+  cursor: pointer;
 }
 
 .edit-button:hover {

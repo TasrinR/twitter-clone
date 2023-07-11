@@ -21,7 +21,6 @@ const ContainerSection = ({
 
   const handleInfiniteScroll = () => {
     let pageNumber = Math.ceil(posts?.length / 10) + 1;
-    console.log(pageNumber);
     setCurrentPage(pageNumber);
   };
 
@@ -36,7 +35,7 @@ const ContainerSection = ({
     <div className={styles["post-container"]} ref={containerRef}>
       <h1 className={styles["page-title"]}>Home</h1>
       <CreatePostField callBack={callBack} user={user} />
-      <PostShowSection posts={posts} />
+      <PostShowSection posts={posts} user={user} />
       {loading && <p>loading......</p>}
     </div>
   );

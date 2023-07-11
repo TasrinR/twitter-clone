@@ -13,7 +13,7 @@ const SingleRoomField = ({ room, userInfo, callBack }) => {
       }`}
       onClick={() => callBack(room?.roomId || userInfo.userId)}
     >
-      {room?.roomId == newNotification && (
+      {room?.roomId == newNotification && newNotification != undefined && (
         <span className={styles["notification-badge"]}></span>
       )}
       <div

@@ -8,7 +8,7 @@ const EditProfile = ({ callBack, profileInfo }) => {
   const [profile, setProfile] = useState();
 
   useEffect(() => {
-    if (!!profile) {
+    if (!profile) {
       setProfile(profileInfo);
     }
   }, [profileInfo]);
@@ -41,7 +41,8 @@ const EditProfile = ({ callBack, profileInfo }) => {
       coverImage: "",
       bio: profile?.bio,
       username: profile?.username,
-      websiteUrl: profile.websiteUrl,
+      websiteUrl: profile?.websiteUrl,
+      bgColor: profile?.bgColor,
     };
     try {
       const res = await updateUserBasicInfo(params);

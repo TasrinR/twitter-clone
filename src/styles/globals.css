@@ -80,6 +80,14 @@ body {
   line-height: 28px;
 }
 
+html {
+  background-color: white;
+}
+ 
+body {
+  background-color: rgb(245, 246, 246, 0.4);
+}
+
 a {
   color: inherit;
   text-decoration: none;

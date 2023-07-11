@@ -12,7 +12,7 @@ API.interceptors.request.use((req) => {
   return req;
 });
 
-export const getAllTweet = ({page}) => API.get(`/api/p/post?page=${page}`)
+export const getAllTweet = ({ page }) => API.get(`/api/p/post?page=${page}`);
 export const uploadTweet = (formData) => API.post("/api/a/post", formData);
 export const updateUserBasicInfo = (formData) =>
   API.post("/api/a/user/basic-info", formData);
@@ -26,3 +26,5 @@ export const postNewMessage = (postBody) =>
   API.post(`/api/a/message`, postBody);
 export const favoriteItems = (data) =>
   API.post(`/api/a/favorite?criteria=${data.criteria}&itemId=${data.itemId}`);
+export const addComment = (data) =>
+  API.post(`/api/a/comment?postId=${data.postId}`, data.body);

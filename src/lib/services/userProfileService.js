@@ -2,12 +2,12 @@ import User from "../model/User";
 
 export const createUserBasicInfo = async (req, res) => {
   const { id } = req.user;
-  const { name, username, bio, profilePicture, coverImage, websiteUrl } =
+  const { name, username, bio, profilePicture, coverImage, websiteUrl, bgColor } =
     req.body;
   const user = await User.findOneAndUpdate(
     { _id: id },
     {
-      profile: { name, username, bio, profilePicture, coverImage, websiteUrl },
+      profile: { name, username, bio, profilePicture, coverImage, websiteUrl, bgColor },
     },
     { new: true }
   );

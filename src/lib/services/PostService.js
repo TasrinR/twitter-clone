@@ -49,7 +49,7 @@ export const createPost = async (req, res) => {
       $project: {
         _id: 1,
         content: 1,
-        favoriteCount: 1,
+        favoriteBy: 1,
         comments: 1,
         userId: 1,
         "profile.name": { $first: "$userInfo.profile.name" },
@@ -130,7 +130,7 @@ export const getAllPosts = async (req, res) => {
         userId: { $first: "$userId" },
         content: { $first: "$content" },
         comments: { $first: "$comments" },
-        favoriteCount: {$first: "$favoriteCount"},
+        favoriteBy: {$first: "$favoriteBy"},
         replies: {
           $push: {
             $cond: [
@@ -148,7 +148,7 @@ export const getAllPosts = async (req, res) => {
         _id: "$_id._id",
         userId: { $first: "$userId" },
         content: { $first: "$content" },
-        favoriteCount: {$first: "$favoriteCount"},
+        favoriteBy: {$first: "$favoriteBy"},
         comments: {
           $push: {
             $cond: [
@@ -169,7 +169,7 @@ export const getAllPosts = async (req, res) => {
       $project: {
         _id: 1,
         content: 1,
-        favoriteCount: 1,
+        favoriteBy: 1,
         userId: 1,
         "profile.name": { $first: "$userInfo.profile.name" },
         "profile.username": { $first: "$userInfo.profile.username" },

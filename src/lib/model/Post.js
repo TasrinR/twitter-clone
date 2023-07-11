@@ -14,9 +14,9 @@ const postSchema = mongoose.Schema({
     type: String,
     required: [true, "+ user Id required in post schema"],
   },
-  favoriteCount: {
-    type: Number,
-    required: [true, "+ favorite Count required in post schema"],
+  favoriteBy: {
+    type: [String],
+    required: [true, "+ favoriteBy required in post schema"]
   },
   comments: [postCommentSchema]
 });

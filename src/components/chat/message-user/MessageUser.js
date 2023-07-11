@@ -1,7 +1,5 @@
 import GlobalDataContext from "@/components/hooks/GlobalContext";
-import {
-  openChatRooms,
-} from "@/lib/constants/ApiRoutes";
+import { openChatRooms } from "@/lib/constants/ApiRoutes";
 import React, { useContext, useEffect, useState } from "react";
 import SingleRoomField from "../single-room-field/SingleRoomField";
 import styles from "./MessageUser.module.css";
@@ -35,7 +33,11 @@ const MessageUser = ({ callBack }) => {
   return (
     <div className={styles["list-wrapper"]}>
       <h2>Chats </h2>
-      <input type="text" onChange={handleFindChatRoom} />
+      <input
+        type="text"
+        onChange={handleFindChatRoom}
+        className={styles["search-box"]}
+      />
       {!searchList?.length ? (
         <div className={styles["rooms"]}>
           {rooms?.map((room) => (

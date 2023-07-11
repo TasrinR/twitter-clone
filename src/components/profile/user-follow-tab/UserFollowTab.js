@@ -1,9 +1,10 @@
 import { getFirstLetters } from "@/lib/helper/randomGenerate";
+import Link from "next/link";
 import styles from "./UserFollowTab.module.css";
 
-const UserFollowTab = ({ user }) => {
+const UserFollowTab = ({ user, callBack }) => {
   return (
-    <div className={styles["wrapper"]}>
+    <Link className={styles["wrapper"]} href={`/profile/${user.userId}`} onClick={()=> callBack("")}>
       {user?.profilePicture ? (
         <img className={styles["profile-image"]} src={user?.profilePicture} />
       ) : (
@@ -15,7 +16,7 @@ const UserFollowTab = ({ user }) => {
         </div>
       )}
       <h2 className={styles["name"]}>{user?.name || user?.email}</h2>
-    </div>
+    </Link>
   );
 };
 

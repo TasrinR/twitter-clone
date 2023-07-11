@@ -1,0 +1,58 @@
+.comment-container {
+  display: flex;
+  width: 100%;
+  gap: 10px;
+}
+
+.profile-image-area img,
+.profile-image-area {
+  height: 30px;
+  width: 30px;
+  min-height: 30px;
+  min-width: 30px;
+  font-size: 12px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: white;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  width: max-content;
+  min-width: 200px;
+  max-width: 400px;
+  background-color: rgba(61, 133, 227, 0.13);
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.content h4 {
+  text-transform: uppercase;
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.content p {
+  color: rgba(0, 0, 0, 0.5);
+  line-height: 20px;
+  font-size: 14px;
+}
+
+.view-reply-button, .reply {
+  font-size: 10px ;
+  color: rgba(66, 136, 227, 0.946);
+  cursor: pointer;
+  width: max-content;
+}
+
+.view-reply-button, .reply {
+  text-decoration: underline;
+}

@@ -18,11 +18,11 @@ const ProfileSection = ({ posts, userInfo }) => {
   const [profile, setProfile] = useState();
 
   useEffect(() => {
-    if (!!session) {
+    if (!!session && !profile) {
       const decodedUser = jwtDecode(session?.user?.accessToken);
       setProfile(decodedUser);
     }
-  }, [session]);
+  }, [session, profile]);
 
   const handleShowProfileWindow = (window) => {
     setProfileWindow(window);
@@ -38,14 +38,15 @@ const ProfileSection = ({ posts, userInfo }) => {
 
   return (
     <div className={styles["profile-page-section"]}>
-      <Navbar activeNav={"profile"} />
+      <Navbar activeNav={userInfo?._id == profile?.id ? "profile" : ""} />
       <ProfileContent
         callBack={handleShowProfileWindow}
         profileContent={userInfo}
         totalPosts={posts?.length}
+        userProfile={profile}
       />
       <div className={styles["post-container"]}>
-        <PostShowSection posts={posts} />
+        <PostShowSection posts={posts} user={profile} />
       </div>
       <Sidebar callBack={handleOpenSignUpWindow} />
       {window === "sign-up" && <SignUp callBack={handleOpenSignUpWindow} />}
@@ -58,7 +59,7 @@ const ProfileSection = ({ posts, userInfo }) => {
       )}
       {profileWindow == "favorite" && (
         <FollowArea
-          userId={profile?.id}
+          userId={userInfo?._id}
           callBack={handleShowProfileWindow}
           followerList={profile?.followerList}
           followingList={profile?.followingList}

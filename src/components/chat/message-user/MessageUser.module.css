@@ -17,6 +17,16 @@
   color: rgb(0, 162, 255);
 }
 
+.search-box {
+  width: 100%;
+  height: 30px;
+  border-radius: 30px;
+  border: 1px solid grey;
+  outline: none;
+  padding: 10px 20px;
+  margin-top: 10px;
+}
+
 .rooms {
   margin-top: 20px;
   display: flex;

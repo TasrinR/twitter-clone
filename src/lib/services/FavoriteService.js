@@ -5,6 +5,7 @@ import User from "../model/User";
 export const updateFavoriteList = async (req, res) => {
   const { id } = req.user;
   const { criteria, itemId } = req.query;
+  if (id == itemId) return;
   switch (criteria) {
     case "Follow":
       return await followUser(id, itemId);
@@ -37,7 +38,7 @@ const favoritePost = async (id, itemId) => {
   const Collection = Post;
   const updatedPost = await Collection.updateOne(
     { _id: itemId },
-    { $inc: { favoriteCount: 1 } }
+    { $push: { favoriteBy: id } }
   );
   return updatedPost;
 };
@@ -62,7 +63,7 @@ const unFavoritePost = async (id, itemId) => {
   const Collection = Post;
   const updatedPost = await Collection.updateOne(
     { _id: itemId },
-    { $inc: { favoriteCount: -1 } }
+    { $pull: { favoriteBy: id } }
   );
   return updatedPost;
 };
