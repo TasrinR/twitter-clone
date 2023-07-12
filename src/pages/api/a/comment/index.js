@@ -5,6 +5,8 @@ const handler = async (req, res) => {
   switch (req.method) {
     case "POST":
       return await addComment(req, res);
+    default:
+      throw new Error("method not allowed");
   }
 };
 

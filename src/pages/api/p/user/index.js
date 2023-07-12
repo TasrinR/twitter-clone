@@ -5,6 +5,8 @@ const handler = async (req, res) => {
   switch (req.method) {
     case "GET":
       return await getUserInfo(req, res);
+    default:
+      throw new Error("method not allowed");
   }
 };
 

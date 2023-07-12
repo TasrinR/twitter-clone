@@ -34,3 +34,10 @@ export const addReply = (data) =>
     `/api/a/comment?postId=${data.postId}&commentId=${data.commentId}`,
     data.body
   );
+export const getComments = (tweetId) =>
+  API.get(`/api/p/comments?tweetId=${tweetId}`);
+export const addNewTweet = (params) =>
+  API.post(
+    `/api/a/tweet?type=${params.type}&itemId=${params.itemId}`,
+    params.body
+  );

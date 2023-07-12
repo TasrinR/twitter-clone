@@ -1,5 +1,6 @@
 import { ObjectId } from "bson";
 import Post from "../model/Post";
+import Tweet from "../model/Tweet";
 import User from "../model/User";
 
 export const updateFavoriteList = async (req, res) => {
@@ -35,7 +36,7 @@ const followUser = async (id, itemId) => {
 };
 
 const favoritePost = async (id, itemId) => {
-  const Collection = Post;
+  const Collection = Tweet;
   const updatedPost = await Collection.updateOne(
     { _id: itemId },
     { $push: { favoriteBy: id } }
@@ -60,7 +61,7 @@ const unFollowUser = async (id, itemId) => {
 };
 
 const unFavoritePost = async (id, itemId) => {
-  const Collection = Post;
+  const Collection = Tweet;
   const updatedPost = await Collection.updateOne(
     { _id: itemId },
     { $pull: { favoriteBy: id } }

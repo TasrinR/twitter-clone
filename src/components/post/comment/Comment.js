@@ -1,39 +1,36 @@
 import InputAreaField from "@/components/common/input-area-field/InputAreaField";
-import { addReply } from "@/lib/constants/ApiRoutes";
+import { addReply, favoriteItems } from "@/lib/constants/ApiRoutes";
 import { getFirstLetters } from "@/lib/helper/randomGenerate";
 import React, { useEffect, useState } from "react";
 import Reply from "../reply/Reply";
 import styles from "./Comment.module.css";
 
-const Comment = ({ singleComment, user, postId, userId }) => {
-  let { comment } = singleComment || {};
-  let { profile } = comment || {};
-  const [replies, setReplies] = useState([]);
-  const [replyCount, setReplyCount] = useState(0);
-  const [showReplies, setShowReplies] = useState(false);
-  const [openReplyBox, setOpenReplyBox] = useState(false);
+const Comment = ({ singleComment, user, userId }) => {
+  let { profile, favoriteBy } = singleComment || {};
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [favoriteCount, setFavoriteCount] = useState(0);
 
   useEffect(() => {
-    setReplies(singleComment?.replies);
-    setReplyCount(singleComment?.replies?.length);
+    let following = favoriteBy?.includes(userId);
+    setIsFavorite(!!following);
+    setFavoriteCount(favoriteBy?.length);
   }, [singleComment]);
 
-  const handleShowReplies = () => {
-    setShowReplies(!showReplies);
-  };
-
-  const handleUploadReply = async (content) => {
+  const handleFavoriteComment = async () => {
     try {
-      let response = await addReply({
-        postId: postId,
-        commentId: comment._id,
-        body: { comment: content },
+      let response = await favoriteItems({
+        criteria: isFavorite ? "UnFavorite" : "Favorite",
+        itemId: singleComment._id,
       });
-      response = JSON.parse(JSON.stringify(response.data.result));
+      if (response.data.message == "OK") {
+        setIsFavorite(!isFavorite);
+        setFavoriteCount(isFavorite ? favoriteCount - 1 : favoriteCount + 1);
+      }
     } catch (err) {
       console.log(err);
     }
   };
+
   return (
     <div className={styles["comment-container"]}>
       <div className={styles["show-comment-contents"]}>
@@ -56,32 +53,16 @@ const Comment = ({ singleComment, user, postId, userId }) => {
         )}
         <div className={styles["content"]}>
           <h4>{profile?.name || profile?.email}</h4>
-          <p>{comment?.comment}</p>
-          {replyCount ? (
-            <span
-              className={styles["view-reply-button"]}
-              onClick={handleShowReplies}
-            >
-              {showReplies ? "Hide Replies" : `View Replies (${replyCount})`}
-            </span>
-          ) : (
-            ""
-          )}
-          <span
-            className={styles["reply"]}
-            onClick={() => setOpenReplyBox(!openReplyBox)}
-          >
-            Reply
-          </span>
+          <p>{singleComment.content.text}</p>
+          <div className={styles["favorite-area"]}>
+            <img
+              src={isFavorite ? "/black-favorite.svg" : "favorite.svg"}
+              onClick={handleFavoriteComment}
+            />
+            <p>{favoriteCount}</p>
+          </div>
         </div>
       </div>
-      {openReplyBox && (
-        <div className={styles["reply-box-container"]}>
-          <InputAreaField user={user} callBack={handleUploadReply} />
-        </div>
-      )}
-
-      {showReplies && replies.map((reply) => <Reply replyComment={reply} />)}
     </div>
   );
 };

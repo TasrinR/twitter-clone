@@ -1,12 +1,11 @@
 import InputAreaField from "@/components/common/input-area-field/InputAreaField";
 import styles from "@/components/post/single-post/SinglePost.module.css";
 import { addComment, favoriteItems } from "@/lib/constants/ApiRoutes";
-import { getFirstLetters } from "@/lib/helper/randomGenerate";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import Comment from "../comment/Comment";
+import ProfileImage from "./profile-image/ProfileImage";
 
-const SinglePost = ({ post, userId, user }) => {
+const SinglePost = ({ post, userId, user, callBack, handleRetweet }) => {
   const { profile } = post;
   const [isFavorite, setIsFavorite] = useState(false);
   const [favoriteCount, setFavoriteCount] = useState(0);
@@ -21,7 +20,6 @@ const SinglePost = ({ post, userId, user }) => {
     let postFavorite = post?.favoriteBy?.includes(userId);
     setIsFavorite(postFavorite);
     setFavoriteCount(post?.favoriteBy?.length);
-    setComments(post?.comments);
     setCommentCount(post?.comments?.length);
     let following = profile.followerList?.find(
       (follower) => follower.userId == userId
@@ -93,27 +91,7 @@ const SinglePost = ({ post, userId, user }) => {
 
   return (
     <div className={styles["post-container"]}>
-      {profile?.profilePicture ? (
-        <div
-          className={styles["profile-image-area"]}
-          onClick={handleRedirectToProfile}
-        >
-          <img
-            src={
-              profile?.profilePicture ||
-              "https://images.freeimages.com/images/large-previews/abb/fall-leaves-1641772.jpg"
-            }
-          ></img>
-        </div>
-      ) : (
-        <div
-          className={styles["profile-image-area"]}
-          style={{ backgroundColor: profile?.bgColor || "#ff0072" }}
-          onClick={handleRedirectToProfile}
-        >
-          {getFirstLetters(profile?.name || profile?.email)}
-        </div>
-      )}
+      <ProfileImage profile={profile} callBack={handleRedirectToProfile} />
       <div className={styles["content"]}>
         <div className={styles["profile-info-and-action"]}>
           <div
@@ -138,6 +116,43 @@ const SinglePost = ({ post, userId, user }) => {
         {post?.content?.image && (
           <img src={post?.content?.image} className={styles["content-image"]} />
         )}
+        {post.type === "retweet" && (
+          <div className={styles["retweet-container"]}>
+            <div className={styles["retweet-profile-container"]}>
+              <ProfileImage
+                profile={post?.tweetInfo?.profile}
+                callBack={handleRedirectToProfile}
+              />
+              <div className={styles["profile-info-and-action"]}>
+                <div
+                  className={styles["profile-info"]}
+                  onClick={handleRedirectToProfile}
+                >
+                  <h2>
+                    {post?.tweetInfo?.profile?.name ||
+                      post?.tweetInfo?.profile?.email}
+                  </h2>
+                  {post?.tweetInfo?.profile?.username && (
+                    <p>@{post?.tweetInfo?.profile?.username}</p>
+                  )}
+                  <span>.</span>
+                  <p>Apr 25</p>
+                </div>
+              </div>
+            </div>
+            <div className={styles["retweet-content-container"]}>
+              <p className={styles["content-text"]}>
+                {post?.tweetInfo?.content?.text}
+              </p>
+              {post?.content?.image && (
+                <img
+                  src={post?.tweetInfo?.content?.image}
+                  className={styles["content-image"]}
+                />
+              )}
+            </div>
+          </div>
+        )}
         <div className={styles["post-action-field"]}>
           <div className={styles["show-count"]}>
             <img
@@ -146,32 +161,32 @@ const SinglePost = ({ post, userId, user }) => {
             />
             <p className={styles["favorite-count"]}>{favoriteCount}</p>
           </div>
-          <div className={styles["show-count"]}>
+          <div
+            className={styles["show-count"]}
+            onClick={() => callBack(post._id)}
+          >
             <img
               src="/comment.png"
               className={styles["comment-image"]}
-              onClick={handleCommentInputArea}
             />
             <p
               className={styles["comment-count"]}
-              onClick={() => setShowComment(!showComment)}
             >
               {commentCount}
             </p>
           </div>
+          {post?.type != "retweet" && (
+            <div
+              className={styles["show-count"]}
+              onClick={() => handleRetweet(post._id)}
+            >
+              <img src="/share-icon.svg" />
+            </div>
+          )}
         </div>
         {showCommentInputArea && (
           <InputAreaField user={user} callBack={handlePostComment} />
         )}
-        {showComment &&
-          comments.map((singleComment) => (
-            <Comment
-              singleComment={singleComment}
-              user={user}
-              postId={post._id}
-              userId={userId}
-            />
-          ))}
       </div>
     </div>
   );

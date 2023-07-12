@@ -1,10 +1,10 @@
 import RequestAndResponseHandler from "@/lib/middleware/RequestAndResponseHandler";
-import { getAllProfilePosts } from "@/lib/services/PostService";
+import { getComments } from "@/lib/services/TweetService";
 
 const handler = async (req, res) => {
   switch (req.method) {
     case "GET":
-      return await getAllProfilePosts(req, res);
+      return await getComments(req, res);
     default:
       throw new Error("method not allowed");
   }

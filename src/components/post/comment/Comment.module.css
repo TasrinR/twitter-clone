@@ -30,6 +30,10 @@
   margin-top: 10px;
 }
 
+.profile-image-area img {
+  margin: unset;
+}
+
 .content {
   display: flex;
   flex-direction: column;
@@ -53,18 +57,33 @@
   font-size: 14px;
 }
 
-.view-reply-button, .reply {
-  font-size: 10px ;
+.view-reply-button,
+.reply {
+  font-size: 10px;
   color: rgba(66, 136, 227, 0.946);
   cursor: pointer;
   width: max-content;
 }
 
-.view-reply-button, .reply {
+.view-reply-button,
+.reply {
   text-decoration: underline;
 }
 
 .reply-box-container {
   width: 100%;
   padding-left: 50px;
+}
+
+.favorite-area {
+  display: flex;
+  align-items: center;
+  height: 15px;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.favorite-area img {
+  height: 15px;
+  width: 15px;
 }

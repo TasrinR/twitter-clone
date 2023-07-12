@@ -4,7 +4,7 @@ import Sidebar from "@/components/sidebar/Sidebar";
 import SignUp from "@/components/sign-up/SignUp";
 import Login from "@/components/login/Login";
 import { useEffect, useState } from "react";
-import { getAllTweet, uploadTweet } from "@/lib/constants/ApiRoutes";
+import { addNewTweet, getAllTweet } from "@/lib/constants/ApiRoutes";
 import { useSession } from "next-auth/react";
 import jwtDecode from "jwt-decode";
 import ContainerSection from "./ContainerSection";
@@ -20,7 +20,21 @@ const HomePageSection = ({ posts, ref }) => {
   const [postList, setPostList] = useState([]);
 
   const handleUploadNewPost = async (postContents) => {
-    let response = await uploadTweet(postContents);
+    let response = await addNewTweet({
+      body: postContents,
+    });
+    if (response.data.message === "OK") {
+      response = JSON.parse(JSON.stringify(response.data.result));
+      setPostList([...response, ...postList]);
+    }
+  };
+
+  const handleRetweet = async (tweetId) => {
+    let response = await addNewTweet({
+      type: "retweet",
+      itemId: tweetId,
+      body: {},
+    });
     if (response.data.message === "OK") {
       response = JSON.parse(JSON.stringify(response.data.result));
       setPostList([...response, ...postList]);
@@ -58,6 +72,7 @@ const HomePageSection = ({ posts, ref }) => {
         posts={postList}
         handleNewData={handleLoadNewData}
         loading={loading}
+        handleRetweet={handleRetweet}
       />
       <Sidebar callBack={handleOpenSignUpWindow} />
       {window === "sign-up" ? (

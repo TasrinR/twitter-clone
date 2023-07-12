@@ -1,5 +1,5 @@
 import PropsHandler from "@/lib/middleware/PropsHandler";
-import { getAllPosts } from "@/lib/services/PostService";
+import { getAllTweet } from "@/lib/services/TweetService";
 import HomePageSection from "@/sections/HomePageSection";
 
 export default function Home({ posts }) {
@@ -8,7 +8,7 @@ export default function Home({ posts }) {
 
 export async function getServerSideProps(context) {
   let req = {};
-  let response = await PropsHandler(getAllPosts, req);
+  let response = await PropsHandler(getAllTweet, req);
   response = JSON.parse(JSON.stringify(response));
   return {
     props: {

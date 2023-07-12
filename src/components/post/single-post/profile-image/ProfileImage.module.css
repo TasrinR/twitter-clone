@@ -1,0 +1,17 @@
+.profile-image-area img,
+.profile-image-area {
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  min-height: 50px;
+  min-width: 50px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: white;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  text-transform: uppercase;
+  font-weight: 600;
+  cursor: pointer;
+}
