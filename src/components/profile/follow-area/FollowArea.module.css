@@ -45,3 +45,19 @@
 .tab-item.active {
   opacity: 1;
 }
+
+.show-list-area {
+  position: relative;
+  background-color: white;
+  z-index: 2;
+}
+
+.empty-space {
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  text-align: center;
+  color: grey;
+  font-size: 12px;
+  font-weight: 600;
+}

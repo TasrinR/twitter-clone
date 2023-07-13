@@ -1,7 +1,7 @@
 import RequestAndResponseHandler from "@/lib/middleware/RequestAndResponseHandler";
 import {
   updateFavoriteList,
-  getFavoriteList,
+  getFollowFollowingList,
 } from "@/lib/services/FavoriteService";
 
 const handler = async (req, res) => {
@@ -9,7 +9,7 @@ const handler = async (req, res) => {
     case "POST":
       return await updateFavoriteList(req, res);
     case "GET":
-      return await getFavoriteList(req, res);
+      return await getFollowFollowingList(req, res);
     default:
       throw new Error("method not allowed");
   }

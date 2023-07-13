@@ -69,7 +69,7 @@ const unFavoritePost = async (id, itemId) => {
   return updatedPost;
 };
 
-export const getFavoriteList = async (req, res) => {
+export const getFollowFollowingList = async (req, res) => {
   const Collection = User;
   const favoriteObject = await Collection.aggregate([
     {
@@ -128,6 +128,7 @@ export const getFavoriteList = async (req, res) => {
           $first: "$followerList.profileInfo.profile.name",
         },
         "followerList.email": { $first: "$followerList.profileInfo.email" },
+        "followerList.followerList": { $first: "$followerList.profileInfo.followerList" },
         "followerList.username": {
           $first: "$followerList.profileInfo.profile.username",
         },
@@ -143,6 +144,7 @@ export const getFavoriteList = async (req, res) => {
           $first: "$followingList.profileInfo.profile.name",
         },
         "followingList.email": { $first: "$followingList.profileInfo.email" },
+        "followingList.followerList": { $first: "$followingList.profileInfo.followerList" },
         "followingList.username": {
           $first: "$followingList.profileInfo.profile.username",
         },
@@ -183,12 +185,14 @@ export const getFavoriteList = async (req, res) => {
         "followerList.userId": 1,
         "followerList.name": 1,
         "followerList.email": 1,
+        "followerList.followerList": 1,
         "followerList.username": 1,
         "followerList.profilePicture": 1,
         "followerList.bgColor": 1,
         "followingList.userId": 1,
         "followingList.name": 1,
         "followingList.email": 1,
+        "followingList.followerList": 1,
         "followingList.username": 1,
         "followingList.profilePicture": 1,
         "followingList.bgColor": 1,
