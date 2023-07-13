@@ -10,15 +10,22 @@ const CommentSection = ({
   callBack,
   handleUploadComment,
 }) => {
+  const commentContainerRef = useRef();
+
+  useEffect(() => {
+    commentContainerRef?.current?.scroll({
+      top: commentContainerRef?.current?.scrollHeight,
+    });
+  }, [comments]);
   return (
     <>
       <div className={styles["back-space"]}>
         <img src="/back-arrow.svg" onClick={callBack}></img>
       </div>
-      <div className={styles["show-comments"]}>
+      <div className={styles["show-comments"]} ref={commentContainerRef}>
         {loader && <p>loading....</p>}
         {comments?.map((comment) => (
-          <Comment singleComment={comment} userId={user.id} />
+          <Comment singleComment={comment} userId={user.id} key={comment._id} />
         ))}
       </div>
       <div className={styles["input-container"]}>

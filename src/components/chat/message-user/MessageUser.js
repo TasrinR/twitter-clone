@@ -40,14 +40,18 @@ const MessageUser = ({ callBack }) => {
       />
       {!searchList?.length ? (
         <div className={styles["rooms"]}>
-          {rooms?.map((room) => (
-            <SingleRoomField room={room} callBack={callBack} />
+          {rooms?.map((room, index) => (
+            <SingleRoomField room={room} callBack={callBack} key={index} />
           ))}
         </div>
       ) : (
         <div className={styles["rooms"]}>
-          {searchList?.map((userInfo) => (
-            <SingleRoomField userInfo={userInfo} callBack={handleOpenNewRoom} />
+          {searchList?.map((userInfo, index) => (
+            <SingleRoomField
+              userInfo={userInfo}
+              callBack={handleOpenNewRoom}
+              key={index}
+            />
           ))}
         </div>
       )}

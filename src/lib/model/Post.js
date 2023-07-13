@@ -1,4 +1,4 @@
-import * as mongoose from "mongoose";
+import mongoose from "mongoose";
 import { postCommentSchema } from "./innerSchema/PostCommentSchema";
 
 const postSchema = mongoose.Schema({

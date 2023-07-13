@@ -1,4 +1,4 @@
-import * as mongoose from "mongoose"
+import mongoose from "mongoose"
 import User from "./User";
 
 const chatSchema = mongoose.Schema({

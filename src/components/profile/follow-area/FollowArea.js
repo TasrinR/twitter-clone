@@ -65,11 +65,11 @@ const FollowArea = ({ callBack, userId }) => {
         </div>
         <div className={styles["show-list-area"]}>
           {activeId == 1
-            ? list?.followingList?.map((item) => (
-                <UserFollowTab user={item} callBack={callBack} />
+            ? list?.followingList?.map((item, index) => (
+                <UserFollowTab user={item} callBack={callBack} key={index} />
               ))
-            : list?.followerList?.map((item) => (
-                <UserFollowTab user={item} callBack={callBack} />
+            : list?.followerList?.map((item, index) => (
+                <UserFollowTab user={item} callBack={callBack} key={index} />
               ))}
         </div>
       </div>

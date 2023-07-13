@@ -29,11 +29,11 @@ const HomePageSection = ({ posts, ref }) => {
     }
   };
 
-  const handleRetweet = async (tweetId) => {
+  const handleRetweet = async ({ content, tweetId }) => {
     let response = await addNewTweet({
       type: "retweet",
       itemId: tweetId,
-      body: {},
+      body: { text: content, image: "" },
     });
     if (response.data.message === "OK") {
       response = JSON.parse(JSON.stringify(response.data.result));

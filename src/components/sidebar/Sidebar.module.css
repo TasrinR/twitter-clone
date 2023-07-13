@@ -5,7 +5,7 @@
   background-color: rgba(0,0,0,0.03);
   border-radius: 10px;
   position: fixed;
-  right: calc((100vw - 1200px)/2);
+  right: calc((100vw - 1180px)/2);
   top: 20px;
   z-index: 23;
   padding: 20px 20px 10px;

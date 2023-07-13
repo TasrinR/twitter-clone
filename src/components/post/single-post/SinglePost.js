@@ -1,19 +1,25 @@
 import InputAreaField from "@/components/common/input-area-field/InputAreaField";
 import styles from "@/components/post/single-post/SinglePost.module.css";
 import { addComment, favoriteItems } from "@/lib/constants/ApiRoutes";
+import { getCreatedTime } from "@/lib/helper/randomGenerate";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import ProfileImage from "./profile-image/ProfileImage";
 
-const SinglePost = ({ post, userId, user, callBack, handleRetweet }) => {
+const SinglePost = ({
+  post,
+  userId,
+  callBack,
+  handleRetweet,
+  isProfilePage,
+}) => {
   const { profile } = post;
   const [isFavorite, setIsFavorite] = useState(false);
   const [favoriteCount, setFavoriteCount] = useState(0);
-  const [comments, setComments] = useState([]);
   const [commentCount, setCommentCount] = useState(0);
-  const [showCommentInputArea, setShowCommentInputArea] = useState(false);
-  const [showComment, setShowComment] = useState(false);
   const [isFollowed, setIsFollowed] = useState(false);
+  const [openShareModal, setOpenShareModal] = useState(false);
+  const [retweetCaption, setRetweetCaption] = useState("");
   const router = useRouter();
 
   useEffect(() => {
@@ -42,36 +48,6 @@ const SinglePost = ({ post, userId, user, callBack, handleRetweet }) => {
     }
   };
 
-  const handleCommentInputArea = () => {
-    if (userId) {
-      setShowCommentInputArea(!showCommentInputArea);
-    }
-  };
-
-  const handlePostComment = async (content) => {
-    try {
-      let response = await addComment({
-        postId: post?._id,
-        body: { comment: content },
-      });
-      response = JSON.parse(JSON.stringify(response.data.result));
-      let newComment = {
-        comment: {
-          comment: content,
-          userId: userId,
-          profile: user?.profile,
-        },
-        replies: [],
-      };
-      setComments([...comments, newComment]);
-      setCommentCount(commentCount + 1);
-      setShowCommentInputArea(false);
-      setShowComment(false);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   const handleUserFollow = async () => {
     if (userId == post?.userId) return;
     try {
@@ -85,8 +61,27 @@ const SinglePost = ({ post, userId, user, callBack, handleRetweet }) => {
     }
   };
 
-  const handleRedirectToProfile = () => {
-    router.push(`/profile/${post?.userId}`);
+  const handleRedirectToProfile = (id) => {
+    if (!id) {
+      router.push(`/profile/${post?.userId}`);
+    } else {
+      router.push(`/profile/${id}`);
+    }
+  };
+
+  const handleRetweetContent = (e) => {
+    setRetweetCaption(e.target.value);
+  };
+
+  const submitRetweetInfo = () => {
+    handleRetweet({ content: retweetCaption, tweetId: post._id });
+    setOpenShareModal(false);
+    setRetweetCaption("");
+  };
+
+  const handleCloseModal = () => {
+    setOpenShareModal(false);
+    setRetweetCaption("");
   };
 
   return (
@@ -101,9 +96,11 @@ const SinglePost = ({ post, userId, user, callBack, handleRetweet }) => {
             <h2>{profile?.name || profile?.email}</h2>
             {profile?.username && <p>@{profile?.username}</p>}
             <span>.</span>
-            <p>Apr 25</p>
+            <p>
+              {getCreatedTime(post?.createdAt)}
+            </p>
           </div>
-          {userId != post?.userId && (
+          {userId != post?.userId && !isProfilePage && (
             <div className={styles["action-button"]}>
               <img
                 src={isFollowed ? "/following.png" : "/follow.png"}
@@ -121,12 +118,16 @@ const SinglePost = ({ post, userId, user, callBack, handleRetweet }) => {
             <div className={styles["retweet-profile-container"]}>
               <ProfileImage
                 profile={post?.tweetInfo?.profile}
-                callBack={handleRedirectToProfile}
+                callBack={() =>
+                  handleRedirectToProfile(post?.tweetInfo?.userId)
+                }
               />
               <div className={styles["profile-info-and-action"]}>
                 <div
                   className={styles["profile-info"]}
-                  onClick={handleRedirectToProfile}
+                  onClick={() =>
+                    handleRedirectToProfile(post?.tweetInfo?.userId)
+                  }
                 >
                   <h2>
                     {post?.tweetInfo?.profile?.name ||
@@ -136,7 +137,7 @@ const SinglePost = ({ post, userId, user, callBack, handleRetweet }) => {
                     <p>@{post?.tweetInfo?.profile?.username}</p>
                   )}
                   <span>.</span>
-                  <p>Apr 25</p>
+                  <p>{getCreatedTime(post?.tweetInfo?.createdAt)}</p>
                 </div>
               </div>
             </div>
@@ -165,28 +166,43 @@ const SinglePost = ({ post, userId, user, callBack, handleRetweet }) => {
             className={styles["show-count"]}
             onClick={() => callBack(post._id)}
           >
-            <img
-              src="/comment.png"
-              className={styles["comment-image"]}
-            />
-            <p
-              className={styles["comment-count"]}
-            >
-              {commentCount}
-            </p>
+            <img src="/comment.png" className={styles["comment-image"]} />
+            <p className={styles["comment-count"]}>{commentCount}</p>
           </div>
           {post?.type != "retweet" && (
             <div
               className={styles["show-count"]}
-              onClick={() => handleRetweet(post._id)}
+              onClick={() => setOpenShareModal(true)}
             >
               <img src="/share-icon.svg" />
             </div>
           )}
         </div>
-        {showCommentInputArea && (
-          <InputAreaField user={user} callBack={handlePostComment} />
-        )}
+        <div
+          className={`${styles["share-modal-container"]} ${
+            openShareModal && styles["active"]
+          }`}
+        >
+          <div
+            className={`${styles["share-modal"]} ${
+              openShareModal && styles["active"]
+            }`}
+          >
+            <h2>Retweet?</h2>
+            <textarea
+              placeholder="try adding your caption"
+              type="text"
+              value={retweetCaption}
+              onChange={handleRetweetContent}
+            />
+            <button onClick={submitRetweetInfo}>Retweet</button>
+            <img
+              src="/close.svg"
+              className={styles["close-modal"]}
+              onClick={handleCloseModal}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

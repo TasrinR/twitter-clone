@@ -3,7 +3,6 @@ import Tweet from "../model/Tweet";
 
 export const postTweet = async (req, res) => {
   const { type } = req.query;
-  let tweet;
   switch (type) {
     case "comment":
       return await postTweetComment(req, res);
@@ -58,6 +57,8 @@ export const postNewTweet = async (req, res) => {
         type: 1,
         tweetId: 1,
         favoriteBy: 1,
+        createdAt: 1,
+        updatedAt: 1,
         "profile.name": { $first: "$userInfo.profile.name" },
         "profile.username": { $first: "$userInfo.profile.username" },
         "profile.profilePicture": {
@@ -120,6 +121,8 @@ export const retweet = async (req, res) => {
         userId: 1,
         type: 1,
         favoriteBy: 1,
+        createdAt: 1,
+        updatedAt: 1,
         tweetId: {
           $cond: [{ $eq: ["$tweetId", null] }, "$$REMOVE", "$tweetId"],
         },
@@ -159,6 +162,8 @@ export const retweet = async (req, res) => {
         profile: 1,
         comments: 1,
         favoriteBy: 1,
+        createdAt: 1,
+        updatedAt: 1,
         "tweetInfo.content": 1,
         "tweetInfo.userId": 1,
         "tweetInfo.type": 1,
@@ -233,6 +238,8 @@ export const postTweetComment = async (req, res) => {
         type: 1,
         tweetId: 1,
         favoriteBy: 1,
+        createdAt: 1,
+        updatedAt: 1,
         "profile.name": { $first: "$userInfo.profile.name" },
         "profile.username": { $first: "$userInfo.profile.username" },
         "profile.profilePicture": {
@@ -247,7 +254,7 @@ export const postTweetComment = async (req, res) => {
 
   await Collection.findOneAndUpdate(
     { _id: itemId },
-    { $push: { comments: newComment._id } }
+    { $push: { comments: matchId } }
   );
   return newComment;
 };
@@ -286,6 +293,8 @@ export const getAllTweet = async (req, res) => {
         userId: 1,
         type: 1,
         favoriteBy: 1,
+        createdAt: 1,
+        updatedAt: 1,
         tweetId: {
           $cond: [{ $eq: ["$tweetId", null] }, "$$REMOVE", "$tweetId"],
         },
@@ -325,11 +334,15 @@ export const getAllTweet = async (req, res) => {
         profile: 1,
         comments: 1,
         favoriteBy: 1,
+        createdAt: 1,
+        updatedAt: 1,
         "tweetInfo.content": 1,
         "tweetInfo.userId": 1,
         "tweetInfo.type": 1,
         "tweetInfo.comments": 1,
         "tweetInfo.favoriteBy": 1,
+        "tweetInfo.favoriteBy": 1,
+        "tweetInfo.createdAt": 1,
         "tweetInfo.profile.name": {
           $first: "$tweetInfo.userInfo.profile.name",
         },
@@ -352,6 +365,119 @@ export const getAllTweet = async (req, res) => {
     },
     { $sort: { _id: -1 } },
   ]);
+  return allTweets;
+};
+
+export const getAllProfileTweets = async (req, res) => {
+  let profileId = req.query?.id;
+  let Collection = Tweet;
+  let allTweets = await Collection.aggregate([
+    {
+      $match: { userId: new ObjectId(profileId) },
+    },
+    {
+      $match: {
+        $expr: {
+          $or: [{ $eq: ["$type", "tweet"] }, { $eq: ["$type", "retweet"] }],
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "userId",
+        foreignField: "_id",
+        as: "userInfo",
+      },
+    },
+    {
+      $lookup: {
+        from: "tweets",
+        localField: "tweetId",
+        foreignField: "_id",
+        as: "tweetInfo",
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        content: 1,
+        userId: 1,
+        type: 1,
+        favoriteBy: 1,
+        createdAt: 1,
+        updatedAt: 1,
+        tweetId: {
+          $cond: [{ $eq: ["$tweetId", null] }, "$$REMOVE", "$tweetId"],
+        },
+        tweetInfo: {
+          $cond: [
+            { $eq: [{ $size: "$tweetInfo" }, 0] },
+            "$$REMOVE",
+            { $first: "$tweetInfo" },
+          ],
+        },
+        "profile.name": { $first: "$userInfo.profile.name" },
+        "profile.username": { $first: "$userInfo.profile.username" },
+        "profile.profilePicture": {
+          $first: "$userInfo.profile.profilePicture",
+        },
+        "profile.bgColor": { $first: "$userInfo.profile.bgColor" },
+        "profile.email": { $first: "$userInfo.email" },
+        "profile.followerList": { $first: "$userInfo.followerList" },
+        comments: 1,
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "tweetInfo.userId",
+        foreignField: "_id",
+        as: "tweetInfo.userInfo",
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        content: 1,
+        userId: 1,
+        type: 1,
+        tweetId: 1,
+        profile: 1,
+        comments: 1,
+        favoriteBy: 1,
+        createdAt: 1,
+        updatedAt: 1,
+        "tweetInfo.content": 1,
+        "tweetInfo.userId": 1,
+        "tweetInfo.type": 1,
+        "tweetInfo.comments": 1,
+        "tweetInfo.favoriteBy": 1,
+        "tweetInfo.createdAt": 1,
+        "tweetInfo.updatedAt": 1,
+        "tweetInfo.profile.name": {
+          $first: "$tweetInfo.userInfo.profile.name",
+        },
+        "tweetInfo.profile.username": {
+          $first: "$tweetInfo.userInfo.profile.username",
+        },
+        "tweetInfo.profile.profilePicture": {
+          $first: "$tweetInfo.userInfo.profile.profilePicture",
+        },
+        "tweetInfo.profile.bgColor": {
+          $first: "$tweetInfo.userInfo.profile.bgColor",
+        },
+        "tweetInfo.profile.email": {
+          $first: "$tweetInfo.userInfo.email",
+        },
+        "tweetInfo.profile.followerList": {
+          $first: "$tweetInfo.userInfo.followerList",
+        },
+      },
+    },
+    { $sort: { _id: -1 } },
+  ]);
+
   return allTweets;
 };
 
@@ -384,6 +510,8 @@ export const getComments = async (req, res) => {
         type: 1,
         tweetId: 1,
         favoriteBy: 1,
+        createdAt: 1,
+        updatedAt: 1,
         "profile.name": { $first: "$userInfo.profile.name" },
         "profile.username": { $first: "$userInfo.profile.username" },
         "profile.profilePicture": {

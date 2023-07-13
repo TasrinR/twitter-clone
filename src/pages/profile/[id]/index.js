@@ -1,5 +1,5 @@
 import PropsHandler from '@/lib/middleware/PropsHandler';
-import { getAllProfilePosts } from '@/lib/services/PostService';
+import { getAllProfileTweets } from '@/lib/services/TweetService';
 import { getUserInfo } from '@/lib/services/userProfileService';
 import ProfileSection from '@/sections/ProfileSection'
 import React from 'react'
@@ -17,7 +17,7 @@ export async function getServerSideProps(context) {
       id,
     }
   }
-  let postResponse = await PropsHandler(getAllProfilePosts, req);
+  let postResponse = await PropsHandler(getAllProfileTweets, req);
   postResponse = JSON.parse(JSON.stringify(postResponse));
 
   let profileResponse = await PropsHandler(getUserInfo, req);

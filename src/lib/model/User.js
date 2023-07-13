@@ -1,4 +1,4 @@
-import * as mongoose from "mongoose";
+import mongoose from "mongoose";
 import { followerSchema } from "./innerSchema/FollowerSchema";
 import { followingSchema } from "./innerSchema/FollowingSchema";
 import { profileSchema } from "./innerSchema/ProfileSchema";

@@ -21,3 +21,10 @@ export const getNoProfileImageBackground = () => {
   }
   return bgColor;
 };
+
+export const getCreatedTime = (time) => {
+  let createdDate = new Date(time).toDateString();
+  createdDate = createdDate.split(" ");
+  let date = createdDate[1] + " " + createdDate[2] + ", " + createdDate[3];
+  return date;
+};

@@ -26,9 +26,9 @@ const SingleChat = ({ id }) => {
   }, [newMessage]);
 
   useEffect(() => {
-    if (messageContainerRef?.current?.clientHeight > window.innerHeight) {
-      messageContainerRef?.current?.scrollIntoView({ block: "end" });
-    }
+    messageContainerRef?.current?.scroll({
+      top: messageContainerRef?.current?.scrollHeight,
+    });
   }, [messages]);
 
   const handleMessageEvent = (e) => {
@@ -83,6 +83,7 @@ const SingleChat = ({ id }) => {
                 className={`${styles["single-message"]} ${
                   message?.sender?._id == id && styles["right"]
                 }`}
+                key={message._id}
               >
                 {message?.sender?.profile?.profilePicture ? (
                   <img src={message?.sender?.profile?.profilePicture}></img>

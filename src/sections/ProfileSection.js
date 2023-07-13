@@ -6,6 +6,7 @@ import FollowArea from "@/components/profile/follow-area/FollowArea";
 import styles from "@/components/profile/ProfileSection.module.css";
 import Sidebar from "@/components/sidebar/Sidebar";
 import SignUp from "@/components/sign-up/SignUp";
+import { addNewTweet } from "@/lib/constants/ApiRoutes";
 import jwtDecode from "jwt-decode";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
@@ -13,7 +14,6 @@ import PostShowSection from "./PostShowSection";
 
 const ProfileSection = ({ posts, userInfo }) => {
   const [profileWindow, setProfileWindow] = useState(false);
-  const [showFollowArea, setShowFollowArea] = useState(false);
   const { data: session } = useSession();
   const [profile, setProfile] = useState();
 
@@ -28,12 +28,20 @@ const ProfileSection = ({ posts, userInfo }) => {
     setProfileWindow(window);
   };
 
-  const handleShowFollowArea = (flag) => {
-    setShowFollowArea(flag);
-  };
   const [window, setWindow] = useState("");
   const handleOpenSignUpWindow = (name) => {
     setWindow(name);
+  };
+
+  const handleRetweet = async ({ content, tweetId }) => {
+    let response = await addNewTweet({
+      type: "retweet",
+      itemId: tweetId,
+      body: { text: content, image: "" },
+    });
+    if (response.data.message === "OK") {
+      alert("tweet shared on your profile")
+    }
   };
 
   return (
@@ -46,7 +54,12 @@ const ProfileSection = ({ posts, userInfo }) => {
         userProfile={profile}
       />
       <div className={styles["post-container"]}>
-        <PostShowSection posts={posts} user={profile} />
+        <PostShowSection
+          posts={posts}
+          user={profile}
+          isProfilePage={true}
+          handleRetweet={handleRetweet}
+        />
       </div>
       <Sidebar callBack={handleOpenSignUpWindow} />
       {window === "sign-up" && <SignUp callBack={handleOpenSignUpWindow} />}
