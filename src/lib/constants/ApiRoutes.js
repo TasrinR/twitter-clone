@@ -13,7 +13,7 @@ API.interceptors.request.use((req) => {
 });
 
 export const getAllTweet = (params) =>
-  API.get(`/api/p/post?page=${params?.page}`);
+  API.get(`/api/p/tweet?page=${params?.page}`);
 export const uploadTweet = (formData) => API.post("/api/a/post", formData);
 export const updateUserBasicInfo = (formData) =>
   API.post("/api/a/user/basic-info", formData);
@@ -41,3 +41,5 @@ export const addNewTweet = (params) =>
     `/api/a/tweet?type=${params.type}&itemId=${params.itemId}`,
     params.body
   );
+export const getAllProfileTweet = (params) =>
+  API.get(`/api/p/tweet/${params.id}?page=${params?.page}`);

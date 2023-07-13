@@ -1,8 +1,8 @@
-import InputAreaField from "@/components/common/input-area-field/InputAreaField";
-import { addReply, favoriteItems } from "@/lib/constants/ApiRoutes";
+import GlobalDataContext from "@/components/hooks/GlobalContext";
+import { favoriteItems } from "@/lib/constants/ApiRoutes";
+import { handleApiError } from "@/lib/helper/ErrorHandling";
 import { getFirstLetters } from "@/lib/helper/randomGenerate";
-import React, { useEffect, useState } from "react";
-import Reply from "../reply/Reply";
+import React, { useContext, useEffect, useState } from "react";
 import styles from "./Comment.module.css";
 
 const Comment = ({ singleComment, user, userId }) => {
@@ -27,7 +27,7 @@ const Comment = ({ singleComment, user, userId }) => {
         setFavoriteCount(isFavorite ? favoriteCount - 1 : favoriteCount + 1);
       }
     } catch (err) {
-      console.log(err);
+      handleApiError(err);
     }
   };
 
@@ -56,7 +56,7 @@ const Comment = ({ singleComment, user, userId }) => {
           <p>{singleComment.content.text}</p>
           <div className={styles["favorite-area"]}>
             <img
-              src={isFavorite ? "/black-favorite.svg" : "favorite.svg"}
+              src={isFavorite ? "/black-favorite.svg" : "/favorite.svg"}
               onClick={handleFavoriteComment}
             />
             <p>{favoriteCount}</p>

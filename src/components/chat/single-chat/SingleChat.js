@@ -1,8 +1,8 @@
 import GlobalDataContext from "@/components/hooks/GlobalContext";
 import { fetchRoomMessages, postNewMessage } from "@/lib/constants/ApiRoutes";
+import { handleApiError } from "@/lib/helper/ErrorHandling";
 import { getFirstLetters } from "@/lib/helper/randomGenerate";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import io from "socket.io-client";
 import styles from "./SingleChat.module.css";
 
 let socket;
@@ -42,7 +42,7 @@ const SingleChat = ({ id }) => {
       response = JSON.parse(JSON.stringify(response?.data?.result));
       setMessages(response);
     } catch (err) {
-      console.log(err);
+      handleApiError(err);
     }
   };
 
@@ -59,7 +59,7 @@ const SingleChat = ({ id }) => {
           handleMessageUpdate(result);
         }
       } catch (err) {
-        console.log(err);
+        handleApiError(err);
       }
     }
   };

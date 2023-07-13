@@ -1,4 +1,3 @@
-const uuid = require("uuid");
 import User from "../model/User";
 import bcrypt from "bcryptjs";
 import { generateJwtToken } from "./generateJwtToken";
@@ -13,19 +12,19 @@ export const register = async (req, res) => {
 
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
-  let bgColor = "#" + Math.floor(Math.random() * 16777215).toString(16)
+  let bgColor = "#" + Math.floor(Math.random() * 16777215).toString(16);
   let profile = {
-    bgColor: bgColor
-  }
+    bgColor: bgColor,
+  };
 
-  if (userExists?.isActive) {
+  if (userExists) {
     res.status(400);
     throw new Error("User already exists");
   } else {
     user = await collection.create({
       email,
       password: hashedPassword,
-      profile: profile
+      profile: profile,
     });
   }
   if (user) {
@@ -44,12 +43,11 @@ export const login = async (req, res) => {
     password,
     user?.password || ""
   );
-  const accessToken = generateJwtToken(user);
   if (!user || !isPasswordMatched) {
     res.statusCode = 400;
-    res.message = "invalid credential";
-    return;
+    throw new Error("invalid credential");
   }
+  const accessToken = await generateJwtToken(user);
   res.statusCode = 200;
   return accessToken;
 };

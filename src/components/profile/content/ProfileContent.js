@@ -2,6 +2,8 @@ import Link from "next/link";
 import styles from "@/components/profile/content/ProfileContent.module.css";
 import { getFirstLetters } from "@/lib/helper/randomGenerate";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { favoriteItems } from "@/lib/constants/ApiRoutes";
 
 const ProfileContent = ({
   callBack,
@@ -11,18 +13,40 @@ const ProfileContent = ({
 }) => {
   const profile = profileContent?.profile;
   const [isFollowed, setIsFollowed] = useState(false);
+  const router = useRouter();
   useEffect(() => {
     let following = profileContent?.followerList?.find(
       (follower) => follower.userId == userProfile?.id
     );
     setIsFollowed(!!following);
   }, [profileContent, userProfile]);
+
+  const handleUserFollow = async () => {
+    if (!userProfile?.id) return;
+    try {
+      let response = await favoriteItems({
+        criteria: isFollowed ? "UnFollow" : "Follow",
+        itemId: profileContent?._id,
+      });
+      if (response.data.message == "OK") setIsFollowed(!isFollowed);
+    } catch (err) {
+      handleApiError(err);
+    }
+  };
+
+  const goBack = () => {
+    router.back();
+  };
   return (
     <div className={styles["profile-content-area"]}>
       <div className={styles["top-section"]}>
-        <img className={styles["back-button"]} src="/left-vector.svg"></img>
+        <img
+          className={styles["back-button"]}
+          src="/left-vector.svg"
+          onClick={goBack}
+        ></img>
         <div className={styles["top-text"]}>
-          <h2>{profile?.name || profileContent.email}</h2>
+          <h2>{profile?.name || profileContent?.email}</h2>
           <p>{totalPosts} posts</p>
         </div>
       </div>
@@ -53,6 +77,7 @@ const ProfileContent = ({
             <img
               src={isFollowed ? "/following.png" : "/follow.png"}
               className={styles["follow-button"]}
+              onClick={handleUserFollow}
             />
           )}
           <h2>{profile?.name || profileContent?.email}</h2>

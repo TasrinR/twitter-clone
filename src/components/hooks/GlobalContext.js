@@ -1,4 +1,5 @@
 import { getChatRooms, getUserFavoriteList } from "@/lib/constants/ApiRoutes";
+import { handleApiError } from "@/lib/helper/ErrorHandling";
 import jwtDecode from "jwt-decode";
 import { useSession } from "next-auth/react";
 import { createContext, useEffect, useState } from "react";
@@ -69,7 +70,7 @@ export const GlobalDataProvider = ({ children }) => {
       response = JSON.parse(JSON.stringify(response?.data?.result));
       setRooms(response);
     } catch (err) {
-      console.log(err);
+      handleApiError
     }
   };
 

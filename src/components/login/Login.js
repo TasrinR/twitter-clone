@@ -1,4 +1,5 @@
 import styles from "@/components/login/Login.module.css";
+import { handleApiError } from "@/lib/helper/ErrorHandling";
 import axios from "axios";
 import jwtDecode from "jwt-decode";
 import { signIn } from "next-auth/react";
@@ -29,7 +30,7 @@ const Login = ({ callBack }) => {
         });
       }
     } catch (err) {
-      console.log(err);
+      handleApiError(err);
     }
   };
 

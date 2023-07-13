@@ -1,5 +1,6 @@
 import GlobalDataContext from "@/components/hooks/GlobalContext";
 import { openChatRooms } from "@/lib/constants/ApiRoutes";
+import { handleApiError } from "@/lib/helper/ErrorHandling";
 import React, { useContext, useEffect, useState } from "react";
 import SingleRoomField from "../single-room-field/SingleRoomField";
 import styles from "./MessageUser.module.css";
@@ -25,7 +26,7 @@ const MessageUser = ({ callBack }) => {
         response = JSON.parse(JSON.stringify(response?.data?.result));
         callBack(response.roomId);
       } catch (err) {
-        console.log(err);
+        handleApiError(err)
       }
     }
   };

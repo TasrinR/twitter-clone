@@ -3,6 +3,7 @@ import styles from "@/styles/Home.module.css";
 import { signIn, signOut } from "next-auth/react";
 import axios from "axios";
 import jwtDecode from "jwt-decode";
+import { handleApiError } from "@/lib/helper/ErrorHandling";
 
 const Login = () => {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
@@ -23,7 +24,7 @@ const Login = () => {
         });
       }
     } catch (err) {
-      console.log(err);
+      handleApiError(err);
     }
   };
 
@@ -42,7 +43,7 @@ const Login = () => {
         });
       }
     } catch (err) {
-      console.log(err);
+      handleApiError(err);
     }
   };
   return (

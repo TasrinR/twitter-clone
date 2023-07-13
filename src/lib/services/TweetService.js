@@ -261,6 +261,7 @@ export const postTweetComment = async (req, res) => {
 
 export const getAllTweet = async (req, res) => {
   const Collection = Tweet;
+  let page = req.query?.page || 1;
 
   let allTweets = await Collection.aggregate([
     {
@@ -365,11 +366,12 @@ export const getAllTweet = async (req, res) => {
     },
     { $sort: { _id: -1 } },
   ]);
-  return allTweets;
+  return allTweets.slice((page - 1) * 10, page * 10);
 };
 
 export const getAllProfileTweets = async (req, res) => {
   let profileId = req.query?.id;
+  let page = req.query?.page || 1;
   let Collection = Tweet;
   let allTweets = await Collection.aggregate([
     {
@@ -478,7 +480,7 @@ export const getAllProfileTweets = async (req, res) => {
     { $sort: { _id: -1 } },
   ]);
 
-  return allTweets;
+  return allTweets.slice((page - 1) * 10, page * 10);
 };
 
 export const getComments = async (req, res) => {

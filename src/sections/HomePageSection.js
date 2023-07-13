@@ -8,6 +8,7 @@ import { addNewTweet, getAllTweet } from "@/lib/constants/ApiRoutes";
 import { useSession } from "next-auth/react";
 import jwtDecode from "jwt-decode";
 import ContainerSection from "./ContainerSection";
+import { handleApiError } from "@/lib/helper/ErrorHandling";
 
 const HomePageSection = ({ posts, ref }) => {
   const [window, setWindow] = useState("");
@@ -18,8 +19,11 @@ const HomePageSection = ({ posts, ref }) => {
     setWindow(name);
   };
   const [postList, setPostList] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [getTweetMessage, setGetTweetMessage] = useState("");
 
   const handleUploadNewPost = async (postContents) => {
+    if (!user.id) return;
     let response = await addNewTweet({
       body: postContents,
     });
@@ -30,6 +34,7 @@ const HomePageSection = ({ posts, ref }) => {
   };
 
   const handleRetweet = async ({ content, tweetId }) => {
+    if (!user.id) return;
     let response = await addNewTweet({
       type: "retweet",
       itemId: tweetId,
@@ -46,9 +51,13 @@ const HomePageSection = ({ posts, ref }) => {
     try {
       let response = await getAllTweet({ page: page });
       response = JSON.parse(JSON.stringify(response.data.result));
-      setPostList([...postList, ...response]);
+      if (response.length) {
+        setPostList([...postList, ...response]);
+      } else {
+        setGetTweetMessage("You are already caught up.");
+      }
     } catch (err) {
-      console.log(err);
+      handleApiError(err);
     }
     setLoading(false);
   };
@@ -63,6 +72,12 @@ const HomePageSection = ({ posts, ref }) => {
     }
   }, [session, postList]);
 
+  useEffect(() => {
+    if (currentPage > 1) {
+      handleLoadNewData(currentPage);
+    }
+  }, [currentPage]);
+
   return (
     <div className={styles["home-page-container"]}>
       <Navbar activeNav={"home"} />
@@ -70,9 +85,10 @@ const HomePageSection = ({ posts, ref }) => {
         callBack={handleUploadNewPost}
         user={user}
         posts={postList}
-        handleNewData={handleLoadNewData}
+        handleNewData={setCurrentPage}
         loading={loading}
         handleRetweet={handleRetweet}
+        tweetMessage={getTweetMessage}
       />
       <Sidebar callBack={handleOpenSignUpWindow} />
       {window === "sign-up" ? (

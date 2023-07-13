@@ -6,16 +6,21 @@ import FollowArea from "@/components/profile/follow-area/FollowArea";
 import styles from "@/components/profile/ProfileSection.module.css";
 import Sidebar from "@/components/sidebar/Sidebar";
 import SignUp from "@/components/sign-up/SignUp";
-import { addNewTweet } from "@/lib/constants/ApiRoutes";
+import { addNewTweet, getAllProfileTweet } from "@/lib/constants/ApiRoutes";
+import { handleApiError } from "@/lib/helper/ErrorHandling";
 import jwtDecode from "jwt-decode";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import PostShowSection from "./PostShowSection";
+import ContainerSection from "./ContainerSection";
 
 const ProfileSection = ({ posts, userInfo }) => {
   const [profileWindow, setProfileWindow] = useState(false);
   const { data: session } = useSession();
   const [profile, setProfile] = useState();
+  const [loading, setLoading] = useState(false);
+  const [postList, setPostList] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [getTweetMessage, setGetTweetMessage] = useState("");
 
   useEffect(() => {
     if (!!session && !profile) {
@@ -23,6 +28,10 @@ const ProfileSection = ({ posts, userInfo }) => {
       setProfile(decodedUser);
     }
   }, [session, profile]);
+
+  useEffect(() => {
+    setPostList(posts);
+  }, [posts]);
 
   const handleShowProfileWindow = (window) => {
     setProfileWindow(window);
@@ -40,9 +49,31 @@ const ProfileSection = ({ posts, userInfo }) => {
       body: { text: content, image: "" },
     });
     if (response.data.message === "OK") {
-      alert("tweet shared on your profile")
+      alert("tweet shared on your profile");
     }
   };
+
+  const handleLoadNewData = async (page) => {
+    setLoading(true);
+    try {
+      let response = await getAllProfileTweet({ id: userInfo._id, page: page });
+      response = JSON.parse(JSON.stringify(response.data.result));
+      if (response.length) {
+        setPostList([...postList, ...response]);
+      } else {
+        setGetTweetMessage("You are already caught up.");
+      }
+    } catch (err) {
+      handleApiError(err);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (currentPage > 1) {
+      handleLoadNewData(currentPage);
+    }
+  }, [currentPage]);
 
   return (
     <div className={styles["profile-page-section"]}>
@@ -53,14 +84,15 @@ const ProfileSection = ({ posts, userInfo }) => {
         totalPosts={posts?.length}
         userProfile={profile}
       />
-      <div className={styles["post-container"]}>
-        <PostShowSection
-          posts={posts}
-          user={profile}
-          isProfilePage={true}
-          handleRetweet={handleRetweet}
-        />
-      </div>
+      <ContainerSection
+        isProfilePage={true}
+        handleRetweet={handleRetweet}
+        posts={postList}
+        handleNewData={setCurrentPage}
+        user={profile}
+        loading={loading}
+        tweetMessage={getTweetMessage}
+      />
       <Sidebar callBack={handleOpenSignUpWindow} />
       {window === "sign-up" && <SignUp callBack={handleOpenSignUpWindow} />}
       {window === "login" && <Login callBack={handleOpenSignUpWindow} />}
@@ -76,6 +108,7 @@ const ProfileSection = ({ posts, userInfo }) => {
           callBack={handleShowProfileWindow}
           followerList={profile?.followerList}
           followingList={profile?.followingList}
+          currentUserId={profile?.id}
         />
       )}
     </div>

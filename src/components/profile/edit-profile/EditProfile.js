@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styles from "@/components/profile/edit-profile/EditProfile.module.css";
-import jwtDecode from "jwt-decode";
 import { updateUserBasicInfo } from "@/lib/constants/ApiRoutes";
 import { signOut } from "next-auth/react";
+import { handleApiError } from "@/lib/helper/ErrorHandling";
 
 const EditProfile = ({ callBack, profileInfo }) => {
   const [profile, setProfile] = useState();
@@ -53,7 +53,7 @@ const EditProfile = ({ callBack, profileInfo }) => {
         callBack();
       }
     } catch (error) {
-      console.log(error);
+      handleApiError(err);
     }
   };
 

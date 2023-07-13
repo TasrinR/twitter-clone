@@ -1,9 +1,11 @@
 import InputAreaField from "@/components/common/input-area-field/InputAreaField";
+import GlobalDataContext from "@/components/hooks/GlobalContext";
 import styles from "@/components/post/single-post/SinglePost.module.css";
 import { addComment, favoriteItems } from "@/lib/constants/ApiRoutes";
+import { handleApiError } from "@/lib/helper/ErrorHandling";
 import { getCreatedTime } from "@/lib/helper/randomGenerate";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import ProfileImage from "./profile-image/ProfileImage";
 
 const SinglePost = ({
@@ -34,6 +36,7 @@ const SinglePost = ({
   }, [post, userId]);
 
   const handleFavoritePost = async () => {
+    if (!userId) return;
     try {
       let response = await favoriteItems({
         criteria: isFavorite ? "UnFavorite" : "Favorite",
@@ -44,12 +47,12 @@ const SinglePost = ({
         setFavoriteCount(isFavorite ? favoriteCount - 1 : favoriteCount + 1);
       }
     } catch (err) {
-      console.log(err);
+      handleApiError(err);
     }
   };
 
   const handleUserFollow = async () => {
-    if (userId == post?.userId) return;
+    if (userId == post?.userId || !userId) return;
     try {
       let response = await favoriteItems({
         criteria: isFollowed ? "UnFollow" : "Follow",
@@ -57,7 +60,7 @@ const SinglePost = ({
       });
       if (response.data.message == "OK") setIsFollowed(!isFollowed);
     } catch (err) {
-      console.log(err);
+      handleApiError(err);
     }
   };
 
@@ -79,26 +82,32 @@ const SinglePost = ({
     setRetweetCaption("");
   };
 
-  const handleCloseModal = () => {
-    setOpenShareModal(false);
-    setRetweetCaption("");
+  const handleShareModal = (type) => {
+    if (!userId) return;
+    if (type == "open") {
+      setOpenShareModal(true);
+    } else if (type == "close") {
+      setOpenShareModal(false);
+      setRetweetCaption("");
+    }
   };
 
   return (
     <div className={styles["post-container"]}>
-      <ProfileImage profile={profile} callBack={handleRedirectToProfile} />
+      <ProfileImage
+        profile={profile}
+        callBack={() => handleRedirectToProfile()}
+      />
       <div className={styles["content"]}>
         <div className={styles["profile-info-and-action"]}>
           <div
             className={styles["profile-info"]}
-            onClick={handleRedirectToProfile}
+            onClick={() => handleRedirectToProfile()}
           >
             <h2>{profile?.name || profile?.email}</h2>
             {profile?.username && <p>@{profile?.username}</p>}
             <span>.</span>
-            <p>
-              {getCreatedTime(post?.createdAt)}
-            </p>
+            <p>{getCreatedTime(post?.createdAt)}</p>
           </div>
           {userId != post?.userId && !isProfilePage && (
             <div className={styles["action-button"]}>
@@ -172,7 +181,7 @@ const SinglePost = ({
           {post?.type != "retweet" && (
             <div
               className={styles["show-count"]}
-              onClick={() => setOpenShareModal(true)}
+              onClick={() => handleShareModal("open")}
             >
               <img src="/share-icon.svg" />
             </div>
@@ -199,7 +208,7 @@ const SinglePost = ({
             <img
               src="/close.svg"
               className={styles["close-modal"]}
-              onClick={handleCloseModal}
+              onClick={() => handleShareModal("close")}
             />
           </div>
         </div>

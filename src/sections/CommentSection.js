@@ -25,12 +25,14 @@ const CommentSection = ({
       <div className={styles["show-comments"]} ref={commentContainerRef}>
         {loader && <p>loading....</p>}
         {comments?.map((comment) => (
-          <Comment singleComment={comment} userId={user.id} key={comment._id} />
+          <Comment singleComment={comment} userId={user?.id} key={comment._id} />
         ))}
       </div>
-      <div className={styles["input-container"]}>
-        <InputAreaField user={user} callBack={handleUploadComment} />
-      </div>
+      {user && (
+        <div className={styles["input-container"]}>
+          <InputAreaField user={user} callBack={handleUploadComment} />
+        </div>
+      )}
     </>
   );
 };

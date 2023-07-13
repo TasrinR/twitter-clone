@@ -1,9 +1,10 @@
 import { getUserFavoriteList } from "@/lib/constants/ApiRoutes";
+import { handleApiError } from "@/lib/helper/ErrorHandling";
 import React, { useEffect, useRef, useState } from "react";
 import UserFollowTab from "../user-follow-tab/UserFollowTab";
 import styles from "./FollowArea.module.css";
 
-const FollowArea = ({ callBack, userId }) => {
+const FollowArea = ({ callBack, userId, currentUserId }) => {
   const [list, setList] = useState();
   const [activeId, setActiveId] = useState(1);
   const wrapperRef = useRef();
@@ -44,7 +45,7 @@ const FollowArea = ({ callBack, userId }) => {
       let response = JSON.parse(JSON.stringify(res.data.result));
       setList(response);
     } catch (err) {
-      console.log(err);
+      handleApiError(err);
     }
   };
 
@@ -74,6 +75,7 @@ const FollowArea = ({ callBack, userId }) => {
                   callBack={callBack}
                   key={index}
                   userId={userId}
+                  currentUserId={currentUserId}
                 />
               ))
             : list?.followerList?.map((item, index) => (
@@ -82,6 +84,7 @@ const FollowArea = ({ callBack, userId }) => {
                   callBack={callBack}
                   key={index}
                   userId={userId}
+                  currentUserId={currentUserId}
                 />
               ))}
         </div>

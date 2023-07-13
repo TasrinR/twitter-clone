@@ -1,4 +1,5 @@
 import styles from "@/components/sign-up/SignUp.module.css";
+import { handleApiError } from "@/lib/helper/ErrorHandling";
 import axios from "axios";
 import { useState } from "react";
 
@@ -10,8 +11,11 @@ const SignUp = ({ callBack }) => {
   });
   const handleSubmit = (e) => {
     e.preventDefault();
-    if(credentials.password == credentials.confirmPassword) {
-      let userObject = {email: credentials.email, password: credentials.password}
+    if (credentials.password == credentials.confirmPassword) {
+      let userObject = {
+        email: credentials.email,
+        password: credentials.password,
+      };
       handleSignUp(userObject);
     }
   };
@@ -19,34 +23,53 @@ const SignUp = ({ callBack }) => {
   const handleSignUp = async (userObject) => {
     try {
       const res = await axios.post("/api/p/signup", {
-        ...userObject
+        ...userObject,
       });
       const data = await res.data;
       if (res.status === 201) {
-        callBack("login")
+        callBack("login");
       }
     } catch (err) {
-      console.log(err);
+      handleApiError(err);
     }
   };
   return (
     <div className={styles["sign-up-container"]}>
       <div className={styles["sign-up-area"]}>
-        <img className={styles["close-button"]} src="/close.svg" onClick={()=> callBack("")}></img>
+        <img
+          className={styles["close-button"]}
+          src="/close.svg"
+          onClick={() => callBack("")}
+        ></img>
         <h2 className={styles["form-title"]}>Create Your Account</h2>
         <form onSubmit={handleSubmit} className={styles["form"]}>
           <label className={styles["label"]}>Email</label>
-          <input type={"email"} className={styles["input-field"]} onChange={(e) =>
+          <input
+            type={"email"}
+            className={styles["input-field"]}
+            onChange={(e) =>
               setCredentials({ ...credentials, email: e.target.value })
-            }/>
+            }
+          />
           <label className={styles["label"]}>Password</label>
-          <input type={"password"} className={styles["input-field"]} onChange={(e) =>
+          <input
+            type={"password"}
+            className={styles["input-field"]}
+            onChange={(e) =>
               setCredentials({ ...credentials, password: e.target.value })
-            }/>
+            }
+          />
           <label className={styles["label"]}>Confirm Password</label>
-          <input type={"password"} className={styles["input-field"]} onChange={(e) =>
-              setCredentials({ ...credentials, confirmPassword: e.target.value })
-            }/>
+          <input
+            type={"password"}
+            className={styles["input-field"]}
+            onChange={(e) =>
+              setCredentials({
+                ...credentials,
+                confirmPassword: e.target.value,
+              })
+            }
+          />
           <input
             type={"submit"}
             className={styles["submit-button"]}
@@ -55,7 +78,12 @@ const SignUp = ({ callBack }) => {
         </form>
         <p className={styles["login-text"]}>
           Already have an account?{" "}
-          <span className={styles["login-link"]} onClick={()=> callBack("login")}>Sign in</span>
+          <span
+            className={styles["login-link"]}
+            onClick={() => callBack("login")}
+          >
+            Sign in
+          </span>
         </p>
       </div>
     </div>

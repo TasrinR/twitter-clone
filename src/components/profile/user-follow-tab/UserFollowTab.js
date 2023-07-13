@@ -1,19 +1,22 @@
 import { favoriteItems } from "@/lib/constants/ApiRoutes";
+import { handleApiError } from "@/lib/helper/ErrorHandling";
 import { getFirstLetters } from "@/lib/helper/randomGenerate";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import styles from "./UserFollowTab.module.css";
 
-const UserFollowTab = ({ user, callBack, userId }) => {
+const UserFollowTab = ({ user, callBack, userId, currentUserId }) => {
   const [isFollowing, setIsFollowing] = useState(false);
   useEffect(() => {
     let following = user?.followerList?.find(
-      (follower) => follower.userId == userId
+      (follower) => follower.userId == currentUserId
     );
+
     setIsFollowing(!!following);
   }, [user, userId]);
 
   const handleFollowUser = async () => {
+    if (!currentUserId) return;
     try {
       let response = await favoriteItems({
         criteria: isFollowing ? "UnFollow" : "Follow",
@@ -23,7 +26,7 @@ const UserFollowTab = ({ user, callBack, userId }) => {
         setIsFollowing(!isFollowing);
       }
     } catch (err) {
-      console.log(err);
+      handleApiError(err);
     }
   };
 

@@ -4,6 +4,7 @@ import CreatePostField from "@/components/home/create-post-field/CreatePostField
 import PostShowSection from "./PostShowSection";
 import CommentSection from "./CommentSection";
 import { addNewTweet, getComments } from "@/lib/constants/ApiRoutes";
+import { handleApiError } from "@/lib/helper/ErrorHandling";
 
 const ContainerSection = ({
   callBack,
@@ -12,9 +13,10 @@ const ContainerSection = ({
   handleNewData,
   loading,
   handleRetweet,
+  isProfilePage,
+  tweetMessage,
 }) => {
   const containerRef = useRef();
-  const [currentPage, setCurrentPage] = useState(1);
   const [comments, setComments] = useState();
   const [loader, setLoader] = useState(false);
   const [currentTweetId, setCurrentTweetId] = useState();
@@ -30,7 +32,7 @@ const ContainerSection = ({
       response = JSON.parse(JSON.stringify(response?.data?.result));
       setComments(response);
     } catch (err) {
-      console.log(err);
+      handleApiError(err);
     }
     setLoader(false);
   };
@@ -48,7 +50,7 @@ const ContainerSection = ({
       response = JSON.parse(JSON.stringify(response.data.result));
       setComments([...comments, ...response]);
     } catch (err) {
-      console.log(err);
+      handleApiError(err);
     }
   };
 
@@ -58,15 +60,9 @@ const ContainerSection = ({
     setComments();
   };
 
-  useEffect(() => {
-    if (currentPage > 1) {
-      handleNewData(currentPage);
-    }
-  }, [currentPage]);
-
   const handleInfiniteScroll = () => {
     let pageNumber = Math.ceil(posts?.length / 10) + 1;
-    setCurrentPage(pageNumber);
+    handleNewData(pageNumber);
   };
 
   useEffect(() => {
@@ -77,20 +73,34 @@ const ContainerSection = ({
     };
   }, [containerRef, posts?.length]);
   return (
-    <div className={styles["post-container"]} ref={containerRef}>
-      {!openCommentContainer && 
-      <>
-        <h1 className={styles["page-title"]}>Home</h1>
-        <CreatePostField callBack={callBack} user={user} />
-        <PostShowSection
-          posts={posts}
-          user={user}
-          handleFetchComments={handleFetchComments}
-          handleRetweet={handleRetweet}
-        />
-        {loading && <p>loading......</p>}
-      </>
-}
+    <div
+      className={`${styles["post-container"]} ${
+        isProfilePage && styles["profile"]
+      }`}
+      ref={containerRef}
+    >
+      {!openCommentContainer && (
+        <>
+          {!isProfilePage && <h1 className={styles["page-title"]}>Home</h1>}
+          {!isProfilePage && (
+            <CreatePostField callBack={callBack} user={user} />
+          )}
+          <PostShowSection
+            posts={posts}
+            user={user}
+            handleFetchComments={handleFetchComments}
+            handleRetweet={handleRetweet}
+            isProfilePage={isProfilePage}
+          />
+          {loading && <p>loading......</p>}
+          {tweetMessage && !loading && (
+            <div className={styles["message-container"]}>
+              <p>{tweetMessage}</p>
+              <img src="/check-mark.svg" />
+            </div>
+          )}
+        </>
+      )}
       <div
         className={`${styles["comment-container"]} ${
           styles[openCommentContainer && "active"]

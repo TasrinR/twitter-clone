@@ -4,6 +4,7 @@ import { signOut, useSession } from "next-auth/react";
 const Sidebar = ({callBack}) => {
   const { data: session } = useSession();
   const handleLogOut = async() => {
+    localStorage.clear()
     await signOut({callbackUrl: "/"})
   }
   return (
