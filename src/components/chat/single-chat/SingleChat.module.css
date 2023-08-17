@@ -73,3 +73,10 @@
   padding: 15px 20px;
   border: 2px solid rgb(0, 162, 255, 0.5);
 }
+
+.send-button {
+  position: absolute;
+  right: 45px;
+  top: 40px;
+  cursor: pointer;
+}

@@ -4,7 +4,7 @@ import React, { useContext } from "react";
 import styles from "./SingleRoomField.module.css";
 
 const SingleRoomField = ({ room, userInfo, callBack }) => {
-  const { newNotification, currentRoom } = useContext(GlobalDataContext);
+  const { newMessageNotification, currentRoom } = useContext(GlobalDataContext);
   let { roomInfo } = room || {};
   return (
     <div
@@ -13,7 +13,7 @@ const SingleRoomField = ({ room, userInfo, callBack }) => {
       }`}
       onClick={() => callBack(room?.roomId || userInfo.userId)}
     >
-      {room?.roomId == newNotification && newNotification != undefined && (
+      {room?.roomId == newMessageNotification && newMessageNotification != undefined && (
         <span className={styles["notification-badge"]}></span>
       )}
       <div

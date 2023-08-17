@@ -4,11 +4,13 @@ import { handleApiError } from "@/lib/helper/ErrorHandling";
 import { getFirstLetters } from "@/lib/helper/randomGenerate";
 import React, { useContext, useEffect, useState } from "react";
 import styles from "./Comment.module.css";
+import { toast } from "react-toastify";
 
 const Comment = ({ singleComment, user, userId }) => {
   let { profile, favoriteBy } = singleComment || {};
   const [isFavorite, setIsFavorite] = useState(false);
   const [favoriteCount, setFavoriteCount] = useState(0);
+  const { socket, newNotification } = useContext(GlobalDataContext);
 
   useEffect(() => {
     let following = favoriteBy?.includes(userId);
@@ -25,6 +27,11 @@ const Comment = ({ singleComment, user, userId }) => {
       if (response.data.message == "OK") {
         setIsFavorite(!isFavorite);
         setFavoriteCount(isFavorite ? favoriteCount - 1 : favoriteCount + 1);
+        let notification = response.data.result.newNotification;
+        socket.emit("send-notification", {
+          notification,
+          roomNo: notification.to._id,
+        });
       }
     } catch (err) {
       handleApiError(err);

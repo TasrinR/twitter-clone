@@ -14,6 +14,7 @@ export const PostMessage = async (req, res) => {
     "sender",
     "profile.name profile.profilePicture profile.bgColor"
   );
+  
   return newChat;
 };
 

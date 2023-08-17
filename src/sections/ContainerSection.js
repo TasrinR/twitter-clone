@@ -1,10 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import styles from "@/components/home/HomePageSection.module.css";
 import CreatePostField from "@/components/home/create-post-field/CreatePostField";
 import PostShowSection from "./PostShowSection";
 import CommentSection from "./CommentSection";
 import { addNewTweet, getComments } from "@/lib/constants/ApiRoutes";
 import { handleApiError } from "@/lib/helper/ErrorHandling";
+import GlobalDataContext from "@/components/hooks/GlobalContext";
 
 const ContainerSection = ({
   callBack,
@@ -21,6 +22,7 @@ const ContainerSection = ({
   const [loader, setLoader] = useState(false);
   const [currentTweetId, setCurrentTweetId] = useState();
   const [openCommentContainer, setOpenCommentContainer] = useState(false);
+  const { socket } = useContext(GlobalDataContext)
 
   const handleFetchComments = async (tweetId) => {
     if (!tweetId) return;
@@ -48,7 +50,12 @@ const ContainerSection = ({
         },
       });
       response = JSON.parse(JSON.stringify(response.data.result));
-      setComments([...comments, ...response]);
+      setComments([...comments, response.newComment]);
+      let notification = response.newNotification;
+        socket.emit("send-notification", {
+          notification,
+          roomNo: notification.to._id,
+        });
     } catch (err) {
       handleApiError(err);
     }

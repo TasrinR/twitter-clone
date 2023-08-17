@@ -7,6 +7,7 @@ import { getCreatedTime } from "@/lib/helper/randomGenerate";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
 import ProfileImage from "./profile-image/ProfileImage";
+import { toast } from "react-toastify";
 
 const SinglePost = ({
   post,
@@ -23,6 +24,7 @@ const SinglePost = ({
   const [openShareModal, setOpenShareModal] = useState(false);
   const [retweetCaption, setRetweetCaption] = useState("");
   const router = useRouter();
+  const { newNotification, socket } = useContext(GlobalDataContext);
 
   useEffect(() => {
     let postFavorite = post?.favoriteBy?.includes(userId);
@@ -45,11 +47,31 @@ const SinglePost = ({
       if (response.data.message == "OK") {
         setIsFavorite(!isFavorite);
         setFavoriteCount(isFavorite ? favoriteCount - 1 : favoriteCount + 1);
+        let notification = response.data.result.newNotification;
+        socket.emit("send-notification", {
+          notification,
+          roomNo: notification.to._id,
+        });
       }
     } catch (err) {
       handleApiError(err);
     }
   };
+
+  useEffect(() => {
+    if (
+      newNotification?.roomNo != undefined &&
+      newNotification?.roomNo == userId &&
+      newNotification.notification.itemId == post._id
+    ) {
+      if (newNotification.notification.message.includes("liked")) {
+        setFavoriteCount(!isFavorite ? favoriteCount + 1 : favoriteCount);
+      }
+      if (newNotification.notification.message.includes("commented")) {
+        setCommentCount(commentCount + 1);
+      }
+    }
+  }, [newNotification]);
 
   const handleUserFollow = async () => {
     if (userId == post?.userId || !userId) return;

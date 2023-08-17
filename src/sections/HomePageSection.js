@@ -3,12 +3,14 @@ import styles from "@/components/home/HomePageSection.module.css";
 import Sidebar from "@/components/sidebar/Sidebar";
 import SignUp from "@/components/sign-up/SignUp";
 import Login from "@/components/login/Login";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { addNewTweet, getAllTweet } from "@/lib/constants/ApiRoutes";
 import { useSession } from "next-auth/react";
 import jwtDecode from "jwt-decode";
 import ContainerSection from "./ContainerSection";
 import { handleApiError } from "@/lib/helper/ErrorHandling";
+import GlobalDataContext from "@/components/hooks/GlobalContext";
+import { toast } from "react-toastify";
 
 const HomePageSection = ({ posts, ref }) => {
   const [window, setWindow] = useState("");
@@ -21,6 +23,7 @@ const HomePageSection = ({ posts, ref }) => {
   const [postList, setPostList] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [getTweetMessage, setGetTweetMessage] = useState("");
+  const { socket, newNotification } = useContext(GlobalDataContext);
 
   const handleUploadNewPost = async (postContents) => {
     if (!user.id) return;
@@ -42,7 +45,12 @@ const HomePageSection = ({ posts, ref }) => {
     });
     if (response.data.message === "OK") {
       response = JSON.parse(JSON.stringify(response.data.result));
-      setPostList([...response, ...postList]);
+      setPostList([response.newTweet, ...postList]);
+      let notification = response.newNotification;
+      socket.emit("send-notification", {
+        notification,
+        roomNo: notification.to._id,
+      });
     }
   };
 

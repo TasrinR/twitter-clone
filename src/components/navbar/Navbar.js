@@ -13,12 +13,12 @@ import GlobalDataContext from "../hooks/GlobalContext";
 const Navbar = ({ activeNav }) => {
   const [user, setUser] = useState();
   const { data: session } = useSession();
-  const { newNotification } = useContext(GlobalDataContext);
+  const { newMessageNotification, newNotification } = useContext(GlobalDataContext);
   useEffect(() => {
     if (!!session && !user) {
       setUser(jwtDecode(session?.user?.accessToken));
     }
-  }, [session, newNotification]);
+  }, [session, newMessageNotification]);
 
   return (
     <div className={styles["container"]}>
@@ -53,6 +53,21 @@ const Navbar = ({ activeNav }) => {
               >
                 <img src="/chat.svg" className={styles["item-image"]}></img>
                 <span>Chats</span>
+                {newMessageNotification ? (
+                  <span className={styles["new-notification"]}></span>
+                ) : (
+                  ""
+                )}
+              </nav>
+            </Link>
+            <Link href={`/notification`}>
+              <nav
+                className={`${styles["item"]} ${
+                  activeNav === "notification" && styles["active"]
+                }`}
+              >
+                <img src="/bell-icon.svg" className={styles["item-image"]}></img>
+                <span>Notification</span>
                 {newNotification ? (
                   <span className={styles["new-notification"]}></span>
                 ) : (

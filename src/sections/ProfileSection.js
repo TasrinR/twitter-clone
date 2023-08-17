@@ -10,8 +10,10 @@ import { addNewTweet, getAllProfileTweet } from "@/lib/constants/ApiRoutes";
 import { handleApiError } from "@/lib/helper/ErrorHandling";
 import jwtDecode from "jwt-decode";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import ContainerSection from "./ContainerSection";
+import GlobalDataContext from "@/components/hooks/GlobalContext";
+import { toast } from "react-toastify";
 
 const ProfileSection = ({ posts, userInfo }) => {
   const [profileWindow, setProfileWindow] = useState(false);
@@ -21,6 +23,7 @@ const ProfileSection = ({ posts, userInfo }) => {
   const [postList, setPostList] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [getTweetMessage, setGetTweetMessage] = useState("");
+  const { socket, newNotification } = useContext(GlobalDataContext);
 
   useEffect(() => {
     if (!!session && !profile) {
@@ -50,6 +53,11 @@ const ProfileSection = ({ posts, userInfo }) => {
     });
     if (response.data.message === "OK") {
       alert("tweet shared on your profile");
+      let notification = response.data.result.newNotification;
+      socket.emit("send-notification", {
+        notification,
+        roomNo: notification.to._id,
+      });
     }
   };
 

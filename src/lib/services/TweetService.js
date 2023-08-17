@@ -1,5 +1,6 @@
 import { ObjectId } from "bson";
 import Tweet from "../model/Tweet";
+import Notification from "../model/Notification";
 
 export const postTweet = async (req, res) => {
   const { type } = req.query;
@@ -89,6 +90,21 @@ export const retweet = async (req, res) => {
     tweetId: itemId,
     favoriteBy: [],
   });
+  const post = await Tweet.findById(itemId);
+  let newNotification = await Notification.create({
+    to: post.userId,
+    from: id,
+    message: `retweeted your tweet`,
+    itemId: itemId,
+    seen: false,
+  });
+
+  newNotification = await Notification.findOne({ _id: newNotification._id })
+    .populate("to", "profile.name profile.profilePicture email profile.bgColor")
+    .populate(
+      "from",
+      "profile.name profile.profilePicture email profile.bgColor"
+    );
 
   let matchId = newTweet._id;
 
@@ -191,7 +207,7 @@ export const retweet = async (req, res) => {
     },
   ]);
 
-  return newTweet;
+  return { newTweet: newTweet[0], newNotification };
 };
 
 export const postTweetComment = async (req, res) => {
@@ -214,6 +230,21 @@ export const postTweetComment = async (req, res) => {
     tweetId: itemId,
     favoriteBy: [],
   });
+  const post = await Collection.findById(itemId);
+  let newNotification = await Notification.create({
+    to: post.userId,
+    from: id,
+    message: `commented on your tweet`,
+    itemId: itemId,
+    seen: false,
+  });
+
+  newNotification = await Notification.findOne({ _id: newNotification._id })
+    .populate("to", "profile.name profile.profilePicture email profile.bgColor")
+    .populate(
+      "from",
+      "profile.name profile.profilePicture email profile.bgColor"
+    );
 
   let matchId = newComment._id;
   newComment = await Collection.aggregate([
@@ -256,7 +287,7 @@ export const postTweetComment = async (req, res) => {
     { _id: itemId },
     { $push: { comments: matchId } }
   );
-  return newComment;
+  return { newComment: newComment[0], newNotification: newNotification };
 };
 
 export const getAllTweet = async (req, res) => {

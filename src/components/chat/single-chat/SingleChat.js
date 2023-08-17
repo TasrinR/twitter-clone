@@ -5,8 +5,6 @@ import { getFirstLetters } from "@/lib/helper/randomGenerate";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import styles from "./SingleChat.module.css";
 
-let socket;
-
 const SingleChat = ({ id }) => {
   const [messages, setMessages] = useState([]);
   const [messageContent, setMessageContent] = useState("");
@@ -48,21 +46,25 @@ const SingleChat = ({ id }) => {
 
   const handleKeyDown = async (e) => {
     if (e.key === "Enter") {
-      setMessageContent("");
-      try {
-        const response = await postNewMessage({
-          message: messageContent,
-          roomId: currentRoom,
-        });
-        if (response.status === 200) {
-          let result = response.data.result;
-          handleMessageUpdate(result);
-        }
-      } catch (err) {
-        handleApiError(err);
-      }
+      await sendMessage()
     }
   };
+
+  const sendMessage = async () => {
+    setMessageContent("");
+    try {
+      const response = await postNewMessage({
+        message: messageContent,
+        roomId: currentRoom,
+      });
+      if (response.status === 200) {
+        let result = response.data.result;
+        handleMessageUpdate(result);
+      }
+    } catch (err) {
+      handleApiError(err);
+    }
+  }
 
   const handleMessageUpdate = (newMessageData) => {
     if (!!newMessageData) {
@@ -80,9 +82,8 @@ const SingleChat = ({ id }) => {
           <div className={styles["message-wrapper"]} ref={messageContainerRef}>
             {messages?.map((message) => (
               <div
-                className={`${styles["single-message"]} ${
-                  message?.sender?._id == id && styles["right"]
-                }`}
+                className={`${styles["single-message"]} ${message?.sender?._id == id && styles["right"]
+                  }`}
                 key={message._id}
               >
                 {message?.sender?.profile?.profilePicture ? (
@@ -107,6 +108,11 @@ const SingleChat = ({ id }) => {
               onKeyDown={handleKeyDown}
               className={styles["message-input-area"]}
               value={messageContent}
+            />
+            <img
+              src="/send-button.png"
+              className={styles["send-button"]}
+              onClick={sendMessage}
             />
           </div>
         </>

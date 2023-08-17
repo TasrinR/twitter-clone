@@ -43,3 +43,5 @@ export const addNewTweet = (params) =>
   );
 export const getAllProfileTweet = (params) =>
   API.get(`/api/p/tweet/${params.id}?page=${params?.page}`);
+export const getNotificationHistory = () => API.get("/api/a/notification")
+export const updateNotificationSeen = (params) => API.put(`/api/a/notification?id=${params.id}`)

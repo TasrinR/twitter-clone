@@ -10,6 +10,10 @@ const handler = async (req, res) => {
       socket.on("send-message", (obj) => {
         io.emit("receive-message", obj);
       });
+
+      socket.on("send-notification", (obj) => {
+        io.emit("recieve-notification", obj)
+      })
     });
   }
 };

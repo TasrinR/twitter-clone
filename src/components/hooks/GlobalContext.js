@@ -3,6 +3,7 @@ import { handleApiError } from "@/lib/helper/ErrorHandling";
 import jwtDecode from "jwt-decode";
 import { useSession } from "next-auth/react";
 import { createContext, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import io from "socket.io-client";
 
 const GlobalDataContext = createContext({});
@@ -15,6 +16,7 @@ export const GlobalDataProvider = ({ children }) => {
   const [availableUser, setAvailableUser] = useState();
   const [rooms, setRooms] = useState();
   const [newMessage, setNewMessage] = useState();
+  const [newMessageNotification, setNewMessageNotification] = useState();
   const [newNotification, setNewNotification] = useState();
 
   useEffect(() => {
@@ -28,8 +30,8 @@ export const GlobalDataProvider = ({ children }) => {
 
   useEffect(() => {
     socketInitializer();
-    if (currentRoom == newNotification) {
-      setNewNotification();
+    if (currentRoom == newMessageNotification) {
+      setNewMessageNotification();
     }
     return () => {
       socket?.disconnect();
@@ -40,16 +42,31 @@ export const GlobalDataProvider = ({ children }) => {
     socket?.on("receive-message", (data) => {
       if (data.roomNo == currentRoom) {
         setNewMessage(data.newMessageData);
-        setNewNotification();
+        setNewMessageNotification();
       } else {
         let roomAvailable = rooms?.find((room) => room.roomId == data.roomNo);
         if (!!roomAvailable) {
-          setNewNotification(data.roomNo);
+          setNewMessageNotification(data.roomNo);
           setNewMessage();
         }
       }
     });
+    socket?.on("recieve-notification", (data) => {
+      setNewNotification(data);
+    });
   }, [socket]);
+
+  useEffect(() => {
+    if (!!newNotification && newNotification?.roomNo == user.id) {
+      let { notification } = newNotification;
+      let { from } = notification;
+      toast.success(`${from.profile.name} ${notification.message}`, {
+        position: "top-right",
+        autoClose: 5000,
+        theme: "light",
+      });
+    }
+  }, [newNotification]);
 
   async function socketInitializer() {
     await fetch(`/api/socket?currentRoom=${currentRoom}`);
@@ -70,7 +87,7 @@ export const GlobalDataProvider = ({ children }) => {
       response = JSON.parse(JSON.stringify(response?.data?.result));
       setRooms(response);
     } catch (err) {
-      handleApiError
+      handleApiError;
     }
   };
 
@@ -80,7 +97,9 @@ export const GlobalDataProvider = ({ children }) => {
         currentRoom,
         setCurrentRoom,
         newMessage,
+        newMessageNotification,
         newNotification,
+        setNewNotification,
         socket,
         availableUser,
         setAvailableUser,

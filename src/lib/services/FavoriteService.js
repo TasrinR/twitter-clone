@@ -1,7 +1,7 @@
 import { ObjectId } from "bson";
-import Post from "../model/Post";
 import Tweet from "../model/Tweet";
 import User from "../model/User";
+import Notification from "../model/Notification";
 
 export const updateFavoriteList = async (req, res) => {
   const { id } = req.user;
@@ -33,6 +33,20 @@ const followUser = async (id, itemId) => {
     { $push: { followingList: { userId: itemId } } },
     { new: true }
   );
+  let newNotification = await Notification.create({
+    to: itemId,
+    from: id,
+    message: "followed you",
+    itemId: itemId,
+    seen: false
+  });
+  newNotification = await Notification.findOne({ _id: newNotification._id })
+    .populate("to", "profile.name profile.profilePicture email profile.bgColor")
+    .populate(
+      "from",
+      "profile.name profile.profilePicture email profile.bgColor"
+    );
+  return newNotification;
 };
 
 const favoritePost = async (id, itemId) => {
@@ -41,7 +55,22 @@ const favoritePost = async (id, itemId) => {
     { _id: itemId },
     { $push: { favoriteBy: id } }
   );
-  return updatedPost;
+  const post = await Collection.findById(itemId);
+  let newNotification = await Notification.create({
+    to: post.userId,
+    from: id,
+    message: `liked your ${post.type}`,
+    itemId: itemId,
+    seen: false
+  });
+  newNotification = await Notification.findOne({ _id: newNotification._id })
+    .populate("to", "profile.name profile.profilePicture email profile.bgColor")
+    .populate(
+      "from",
+      "profile.name profile.profilePicture email profile.bgColor"
+    );
+
+  return { updatedPost, newNotification };
 };
 
 const unFollowUser = async (id, itemId) => {
@@ -128,7 +157,9 @@ export const getFollowFollowingList = async (req, res) => {
           $first: "$followerList.profileInfo.profile.name",
         },
         "followerList.email": { $first: "$followerList.profileInfo.email" },
-        "followerList.followerList": { $first: "$followerList.profileInfo.followerList" },
+        "followerList.followerList": {
+          $first: "$followerList.profileInfo.followerList",
+        },
         "followerList.username": {
           $first: "$followerList.profileInfo.profile.username",
         },
@@ -144,7 +175,9 @@ export const getFollowFollowingList = async (req, res) => {
           $first: "$followingList.profileInfo.profile.name",
         },
         "followingList.email": { $first: "$followingList.profileInfo.email" },
-        "followingList.followerList": { $first: "$followingList.profileInfo.followerList" },
+        "followingList.followerList": {
+          $first: "$followingList.profileInfo.followerList",
+        },
         "followingList.username": {
           $first: "$followingList.profileInfo.profile.username",
         },
