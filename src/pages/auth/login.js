@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import styles from "@/styles/Home.module.css";
 import { signIn, signOut } from "next-auth/react";
 import axios from "axios";
 import jwtDecode from "jwt-decode";
@@ -47,11 +46,10 @@ const Login = () => {
     }
   };
   return (
-    <div className={styles["sign-in-section"]}>
+    <div>
       <>
         <button onClick={() => handleSignIn("github")}>Sign In</button>
         <div
-          className={styles["credential-area"]}
           styles={{ marginTop: "100px" }}
         >
           <h2>Sign In</h2>
@@ -72,7 +70,6 @@ const Login = () => {
           <button onClick={() => handleSignInWithCredentials()}>Submit</button>
         </div>
         <div
-          className={styles["credential-area"]}
           styles={{ marginTop: "100px" }}
         >
           <h2>Sign Up</h2>
